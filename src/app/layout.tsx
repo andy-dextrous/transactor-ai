@@ -1,17 +1,13 @@
-import type { Metadata } from "next";
-import { ThemeProvider } from "next-themes";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import "./css/globals.css"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-inter",
+  display: "swap",
+})
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,23 +15,16 @@ export const metadata: Metadata = {
   icons: {
     icon: "/convex.svg",
   },
-};
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
-    // `suppressHydrationWarning` only affects the html tag,
-    // and is needed by `ThemeProvider` which sets the theme
-    // class attribute on it
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ThemeProvider attribute="class">{children}</ThemeProvider>
-      </body>
+    <html lang="en">
+      <body className={`${inter.variable} antialiased`}>{children}</body>
     </html>
-  );
+  )
 }

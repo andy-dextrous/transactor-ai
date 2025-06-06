@@ -1,0 +1,136 @@
+/*
+  Typography
+*/
+
+/* https://www.fluid-type-scale.com/ */
+
+@theme {
+  --font-sans: "Inter", sans-serif;
+  --font-heading: "Inter", sans-serif;
+
+  --text-h1: clamp(2.027rem, 1.5253rem + 7.3033vw, 3.815rem);
+  --text-h2: clamp(1.802rem, 1.4914rem + 4.9828vw, 3.052rem);
+  --text-h3: clamp(1.602rem, 1.7956rem + 1.3921vw, 2.441rem);
+  --text-h4: clamp(1.424rem, 1.6612rem + 0.3338vw, 1.953rem);
+  --text-h5: clamp(1.266rem, 5vw, 1.563rem);
+  --text-h6: clamp(1.125rem, 5vw, 1.25rem);
+  --text-base: clamp(1rem, 1.0294rem + 0.1656vw, 1rem);
+  --text-sm: clamp(0.889rem, 0.191vw + 0.837rem, 0.8rem);
+  --text-xs: clamp(0.79rem, 5vw, 0.64rem);
+}
+
+@layer components {
+  .text-gradient {
+    background: linear-gradient(
+      to right,
+      theme(colors.secondary-600),
+      theme(colors.primary-500)
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+}
+
+@layer base {
+  h1 {
+    font-family: theme(fontFamily.heading);
+    font-size: theme(fontSize.h1);
+    color: theme(colors.gray.950);
+    line-height: 1.05;
+    font-weight: theme(fontWeight.light);
+    letter-spacing: theme(letterSpacing.normal);
+  }
+
+  h2 {
+    font-family: theme(fontFamily.heading);
+    font-size: theme(fontSize.h2);
+    color: theme(colors.gray.950);
+    line-height: 1.1;
+    font-weight: theme(fontWeight.light);
+    letter-spacing: theme(letterSpacing.normal);
+  }
+
+  h3 {
+    font-family: theme(fontFamily.heading);
+    font-size: theme(fontSize.h3);
+    color: theme(colors.gray.950);
+    line-height: 1.4;
+    font-weight: theme(fontWeight.light);
+    letter-spacing: theme(letterSpacing.normal);
+  }
+
+  h4 {
+    font-family: theme(fontFamily.heading);
+    font-size: theme(fontSize.h4);
+    color: theme(colors.gray.950);
+    line-height: 1.43;
+    font-weight: theme(fontWeight.medium);
+    letter-spacing: theme(letterSpacing.normal);
+  }
+
+  h5 {
+    font-family: theme(fontFamily.heading);
+    font-size: theme(fontSize.h5);
+    color: theme(colors.gray.950);
+    line-height: theme(lineHeight.tight);
+    font-weight: theme(fontWeight.light);
+    letter-spacing: theme(letterSpacing.normal);
+  }
+
+  h6 {
+    font-family: theme(fontFamily.heading);
+    font-size: theme(fontSize.h6);
+    color: theme(colors.gray.950);
+    line-height: theme(lineHeight.tight);
+    font-weight: theme(fontWeight.semibold);
+    letter-spacing: theme(letterSpacing.tight);
+  }
+
+  p {
+    color: theme(colors.gray.950);
+    font-family: theme(fontFamily.sans);
+    font-size: theme(fontSize.base);
+    line-height: 1.5;
+    font-weight: theme(fontWeight.light);
+    letter-spacing: 2%;
+  }
+
+  p a {
+    color: theme(colors.primary-500);
+    font-weight: theme(fontWeight.semibold);
+    text-decoration: none;
+  }
+
+  ul {
+    color: theme(colors.gray.950);
+    font-family: theme(fontFamily.sans);
+    font-size: theme(fontSize.base);
+    line-height: theme(lineHeight.normal);
+    letter-spacing: theme(letterSpacing.normal);
+  }
+
+  ol {
+    color: theme(colors.gray.950);
+    font-family: theme(fontFamily.sans);
+    font-size: theme(fontSize.base);
+    line-height: theme(lineHeight.normal);
+    letter-spacing: theme(letterSpacing.normal);
+  }
+
+  li {
+    color: theme(colors.gray.950);
+    font-family: theme(fontFamily.sans);
+    font-size: theme(fontSize.base);
+    line-height: theme(lineHeight.normal);
+    letter-spacing: theme(letterSpacing.normal);
+  }
+
+  blockquote {
+    color: theme(colors.gray.950);
+    font-family: theme(fontFamily.sans);
+    font-size: theme(fontSize.base);
+    line-height: theme(lineHeight.normal);
+    letter-spacing: theme(letterSpacing.normal);
+  }
+}

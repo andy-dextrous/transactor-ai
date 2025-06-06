@@ -1,0 +1,151 @@
+/* Spacing - applies to padding, margin, width & height */
+
+@theme {
+  --spacing-section-x: clamp(1rem, -0.3907rem + 6.9536vw, 6.25rem);
+  --spacing-section-y: clamp(3rem, 2.1391rem + 4.3046vw, 6.25rem);
+  --spacing-section-xs: clamp(1.6875rem, 1.243vw + 1.439rem, 2.5rem);
+  --spacing-section-sm: clamp(2.25rem, 2.294vw + 1.791rem, 3.75rem);
+  --spacing-section-md: clamp(3rem, 4.015vw + 2.197rem, 5.625rem);
+  --spacing-section-lg: clamp(4rem, 6.788vw + 2.642rem, 8.4375rem);
+  --spacing-section-xl: clamp(5.5rem, 9.272vw + 3.646rem, 12.5rem); /* 200px */
+  --spacing-section-xxl: clamp(7.0625rem, 18.164vw + 3.43rem, 18.9375rem);
+
+  --spacing-logo: clamp(45px, 10vw, 60px);
+  --spacing-nav: clamp(50px, 10vh, 80px);
+
+  --spacing-content: clamp(0.9375rem, 0.7719rem + 0.8278vw, 1.5625rem);
+  --spacing-content-sm: clamp(0.625rem, 0.4594rem + 0.8278vw, 1.25rem);
+  --spacing-content-lg: clamp(1.875rem, 1.5439rem + 1.6556vw, 3.125rem);
+
+  --spacing-container: clamp(19.375rem, -0.7906rem + 100.8278vw, 95.5rem);
+  --spacing-container-md: clamp(17.5rem, 0.1821rem + 86.5894vw, 82.875rem);
+  --spacing-container-sm: clamp(17.5rem, 5.447rem + 60.2649vw, 63rem);
+}
+
+/* Enhanced Brand Colors  */
+
+@theme {
+  --color-primary: #1e40af;
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  --color-primary-foreground: #ffffff;
+
+  --color-secondary: #64748b;
+  --color-secondary-50: #f8fafc;
+  --color-secondary-100: #f1f5f9;
+  --color-secondary-200: #e2e8f0;
+  --color-secondary-300: #cbd5e1;
+  --color-secondary-400: #94a3b8;
+  --color-secondary-500: #64748b;
+  --color-secondary-600: #475569;
+  --color-secondary-700: #334155;
+  --color-secondary-800: #1e293b;
+  --color-secondary-900: #0f172a;
+  --color-secondary-foreground: #ffffff;
+
+  --color-success: #10b981;
+  --color-success-50: #ecfdf5;
+  --color-success-100: #d1fae5;
+  --color-success-200: #a7f3d0;
+  --color-success-300: #6ee7b7;
+  --color-success-400: #34d399;
+  --color-success-500: #10b981;
+  --color-success-600: #059669;
+  --color-success-700: #047857;
+  --color-success-800: #065f46;
+  --color-success-900: #064e3b;
+  --color-success-foreground: #ffffff;
+
+  --color-warning: #f59e0b;
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #fbbf24;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e;
+  --color-warning-900: #78350f;
+  --color-warning-foreground: #ffffff;
+
+  --color-danger: #ef4444;
+  --color-danger-50: #fef2f2;
+  --color-danger-100: #fee2e2;
+  --color-danger-200: #fecaca;
+  --color-danger-300: #fca5a5;
+  --color-danger-400: #f87171;
+  --color-danger-500: #ef4444;
+  --color-danger-600: #dc2626;
+  --color-danger-700: #b91c1c;
+  --color-danger-800: #991b1b;
+  --color-danger-900: #7f1d1d;
+  --color-danger-foreground: #ffffff;
+
+  --color-neutral: #6b7280;
+  --color-neutral-50: #f9fafb;
+  --color-neutral-100: #f3f4f6;
+  --color-neutral-200: #e5e7eb;
+  --color-neutral-300: #d1d5db;
+  --color-neutral-400: #9ca3af;
+  --color-neutral-500: #6b7280;
+  --color-neutral-600: #4b5563;
+  --color-neutral-700: #374151;
+  --color-neutral-800: #1f2937;
+  --color-neutral-900: #111827;
+}
+
+/* Animations */
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@theme {
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-slide-in: slide-in 0.3s ease-out;
+}
