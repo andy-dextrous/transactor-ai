@@ -19,26 +19,13 @@
   --text-xs: clamp(0.79rem, 5vw, 0.64rem);
 }
 
-@layer components {
-  .text-gradient {
-    background: linear-gradient(
-      to right,
-      theme(colors.secondary-600),
-      theme(colors.primary-500)
-    );
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-  }
-}
-
 @layer base {
   h1 {
     font-family: theme(fontFamily.heading);
     font-size: theme(fontSize.h1);
     color: theme(colors.gray.950);
     line-height: 1.05;
-    font-weight: theme(fontWeight.light);
+    font-weight: theme(fontWeight.semibold);
     letter-spacing: theme(letterSpacing.normal);
   }
 
@@ -47,7 +34,7 @@
     font-size: theme(fontSize.h2);
     color: theme(colors.gray.950);
     line-height: 1.1;
-    font-weight: theme(fontWeight.light);
+    font-weight: theme(fontWeight.semibold);
     letter-spacing: theme(letterSpacing.normal);
   }
 
@@ -56,7 +43,7 @@
     font-size: theme(fontSize.h3);
     color: theme(colors.gray.950);
     line-height: 1.4;
-    font-weight: theme(fontWeight.light);
+    font-weight: theme(fontWeight.semibold);
     letter-spacing: theme(letterSpacing.normal);
   }
 
@@ -74,7 +61,7 @@
     font-size: theme(fontSize.h5);
     color: theme(colors.gray.950);
     line-height: theme(lineHeight.tight);
-    font-weight: theme(fontWeight.light);
+    font-weight: theme(fontWeight.semibold);
     letter-spacing: theme(letterSpacing.normal);
   }
 
@@ -92,7 +79,7 @@
     font-family: theme(fontFamily.sans);
     font-size: theme(fontSize.base);
     line-height: 1.5;
-    font-weight: theme(fontWeight.light);
+    font-weight: theme(fontWeight.semibold);
     letter-spacing: 2%;
   }
 
