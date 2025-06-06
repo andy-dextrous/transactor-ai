@@ -108,38 +108,6 @@ export function IconsSection() {
             </div>
           ))}
         </div>
-
-        <div className="mt-8 border-t border-neutral-200 pt-6">
-          <h6 className="mb-6 font-semibold text-neutral-800">Icon Usage</h6>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
-              <h6 className="mb-2 font-medium text-neutral-700">Small (16px)</h6>
-              <div className="flex items-center gap-2">
-                <Search className="h-4 w-4 text-neutral-600" />
-                <Edit className="h-4 w-4 text-neutral-600" />
-                <Settings className="h-4 w-4 text-neutral-600" />
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
-              <h6 className="mb-2 font-medium text-neutral-700">Medium (20px)</h6>
-              <div className="flex items-center gap-2">
-                <Search className="h-5 w-5 text-neutral-600" />
-                <Edit className="h-5 w-5 text-neutral-600" />
-                <Settings className="h-5 w-5 text-neutral-600" />
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
-              <h6 className="mb-2 font-medium text-neutral-700">Large (24px)</h6>
-              <div className="flex items-center gap-2">
-                <Search className="h-6 w-6 text-neutral-600" />
-                <Edit className="h-6 w-6 text-neutral-600" />
-                <Settings className="h-6 w-6 text-neutral-600" />
-              </div>
-            </div>
-          </div>
-        </div>
       </CardContent>
     </Card>
   )

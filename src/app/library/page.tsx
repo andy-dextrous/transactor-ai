@@ -104,11 +104,6 @@ export default function ComponentLibrary() {
         <div className="container">
           <IconsSection />
         </div>
-
-        {/* Statistics */}
-        <div className="container">
-          <StatisticsSection />
-        </div>
       </section>
     </div>
   )
