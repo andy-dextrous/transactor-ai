@@ -216,6 +216,64 @@ export function ButtonsSection() {
             </div>
           </div>
         </div>
+
+        {/* Button Loading States */}
+        <div className="space-y-6">
+          <h6 className="font-semibold text-neutral-800">Button Loading States</h6>
+          <div className="grid grid-cols-4 gap-8 text-center">
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-neutral-600">Default</p>
+              <Button loading>Loading...</Button>
+            </div>
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-neutral-600">Outline</p>
+              <Button variant="outline" loading>
+                Loading...
+              </Button>
+            </div>
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-neutral-600">Secondary</p>
+              <Button variant="secondary" loading>
+                Loading...
+              </Button>
+            </div>
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-neutral-600">Destructive</p>
+              <Button variant="destructive" loading>
+                Deleting...
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Button Disabled States */}
+        <div className="space-y-6">
+          <h6 className="font-semibold text-neutral-800">Button Disabled States</h6>
+          <div className="grid grid-cols-4 gap-8 text-center">
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-neutral-600">Default</p>
+              <Button disabled>Disabled</Button>
+            </div>
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-neutral-600">Outline</p>
+              <Button variant="outline" disabled>
+                Disabled
+              </Button>
+            </div>
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-neutral-600">Secondary</p>
+              <Button variant="secondary" disabled>
+                Disabled
+              </Button>
+            </div>
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-neutral-600">Ghost</p>
+              <Button variant="ghost" disabled>
+                Disabled
+              </Button>
+            </div>
+          </div>
+        </div>
       </CardContent>
     </Card>
   )

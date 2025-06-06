@@ -8,12 +8,12 @@
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
-  --text-h1: clamp(2.027rem, 1.5253rem + 7.3033vw, 3.815rem);
-  --text-h2: clamp(1.802rem, 1.4914rem + 4.9828vw, 3.052rem);
-  --text-h3: clamp(1.602rem, 1.7956rem + 1.3921vw, 2.441rem);
-  --text-h4: clamp(1.424rem, 1.6612rem + 0.3338vw, 1.953rem);
-  --text-h5: clamp(1.266rem, 5vw, 1.563rem);
-  --text-h6: clamp(1.125rem, 5vw, 1.25rem);
+  --text-h1: clamp(2.027rem, 1.5253rem + 7.3033vw, 1.476rem);
+  --text-h2: clamp(1.802rem, 1.4914rem + 4.9828vw, 1.383rem);
+  --text-h3: clamp(1.602rem, 1.7956rem + 1.3921vw, 1.296rem);
+  --text-h4: clamp(1.424rem, 1.6612rem + 0.3338vw, 1.215rem);
+  --text-h5: clamp(1.266rem, 5vw, 1.138rem);
+  --text-h6: clamp(1.125rem, 5vw, 1.067rem);
   --text-base: clamp(1rem, 1.0294rem + 0.1656vw, 1rem);
   --text-sm: clamp(0.889rem, 0.191vw + 0.837rem, 0.8rem);
   --text-xs: clamp(0.79rem, 5vw, 0.64rem);

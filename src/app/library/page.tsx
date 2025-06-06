@@ -14,6 +14,11 @@ import {
   ChatUISection,
   IconsSection,
   StatisticsSection,
+  PropertyCardsSection,
+  LayoutsSection,
+  ServiceProvidersSection,
+  FinancialToolsSection,
+  TransactionManagementSection,
 } from "./_layout"
 import Image from "next/image"
 
@@ -103,6 +108,26 @@ export default function ComponentLibrary() {
         {/* Icons */}
         <div className="container">
           <IconsSection />
+        </div>
+
+        {/* Property Cards */}
+        <div className="container">
+          <PropertyCardsSection />
+        </div>
+
+        {/* Service Providers */}
+        <div className="container">
+          <ServiceProvidersSection />
+        </div>
+
+        {/* Financial Tools */}
+        <div className="container">
+          <FinancialToolsSection />
+        </div>
+
+        {/* Transaction Management */}
+        <div className="container">
+          <TransactionManagementSection />
         </div>
       </section>
     </div>
