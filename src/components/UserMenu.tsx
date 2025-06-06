@@ -1,16 +1,16 @@
-"use client";
+"use client"
 
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { PersonIcon } from "@radix-ui/react-icons";
-import { ReactNode } from "react";
+} from "@/components/ui/dropdown-menu"
+import { PersonIcon } from "@radix-ui/react-icons"
+import { ReactNode } from "react"
 
 export function UserMenu({ children }: { children: ReactNode }) {
   return (
@@ -33,5 +33,5 @@ export function UserMenu({ children }: { children: ReactNode }) {
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  );
+  )
 }

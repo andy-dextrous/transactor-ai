@@ -1,25 +1,20 @@
-import { ConvexLogo } from "@/app/(splash)/GetStarted/ConvexLogo";
-import { Code } from "@/components/Code";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  CodeIcon,
-  MagicWandIcon,
-  PlayIcon,
-  StackIcon,
-} from "@radix-ui/react-icons";
-import Link from "next/link";
-import { ReactNode } from "react";
+import { ConvexLogo } from "@/app/(splash)/GetStarted/ConvexLogo"
+import { Code } from "@/components/Code"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { CodeIcon, MagicWandIcon, PlayIcon, StackIcon } from "@radix-ui/react-icons"
+import Link from "next/link"
+import { ReactNode } from "react"
 
 export const GetStarted = () => {
   return (
     <div className="flex grow flex-col">
       <div className="container mb-20 flex grow flex-col justify-center">
-        <h1 className="mb-8 mt-16 flex flex-col items-center gap-8 text-center text-6xl font-extrabold leading-none tracking-tight">
+        <h1 className="mt-16 mb-8 flex flex-col items-center gap-8 text-center text-6xl leading-none font-extrabold tracking-tight">
           Your app powered by
           <ConvexLogo width={377} height={44} />
         </h1>
-        <div className="mb-8 text-center text-lg text-muted-foreground">
+        <div className="text-muted-foreground mb-8 text-center text-lg">
           Build a realtime full-stack app in no time.
         </div>
         <div className="mb-16 flex justify-center gap-4">
@@ -30,11 +25,9 @@ export const GetStarted = () => {
             <Link href="https://docs.convex.dev/home">Convex docs</Link>
           </Button>
         </div>
-        <div className="flex flex-col gap-4 bg-muted/50 p-12 dark:bg-transparent">
-          <h2 className="mb-1 text-center text-3xl font-bold md:text-4xl ">
-            Next steps
-          </h2>
-          <div className="mb-1 text-center text-muted-foreground">
+        <div className="bg-muted/50 flex flex-col gap-4 p-12 dark:bg-transparent">
+          <h2 className="mb-1 text-center text-3xl font-bold md:text-4xl">Next steps</h2>
+          <div className="text-muted-foreground mb-1 text-center">
             This template is a starting point for building your web application.
           </div>
           <div className="grid gap-4 md:grid-cols-2">
@@ -81,8 +74,7 @@ export const GetStarted = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                Edit <Code>convex/messages.ts</Code> to change the backend
-                functionality.
+                Edit <Code>convex/messages.ts</Code> to change the backend functionality.
               </CardContent>
             </Card>
             <Card>
@@ -101,51 +93,49 @@ export const GetStarted = () => {
       </div>
       <div className="px-20 pb-20">
         <div className="container">
-          <h2 className="mb-6 text-center text-2xl font-bold">
-            Helpful resources
-          </h2>
+          <h2 className="mb-6 text-center text-2xl font-bold">Helpful resources</h2>
           <div className="grid gap-6 md:grid-cols-4">
             <Resource title="Convex Docs" href="https://docs.convex.dev/home">
               Read comprehensive documentation for all Convex features.
             </Resource>
             <Resource title="Stack articles" href="https://stack.convex.dev/">
-              Learn about best practices, use cases, and more from a growing
-              collection of articles, videos, and walkthroughs.
+              Learn about best practices, use cases, and more from a growing collection of
+              articles, videos, and walkthroughs.
             </Resource>
             <Resource title="Discord" href="https://www.convex.dev/community">
-              Join our developer community to ask questions, trade tips &
-              tricks, and show off your projects.
+              Join our developer community to ask questions, trade tips & tricks, and show
+              off your projects.
             </Resource>
             <Resource title="Search them all" href="https://search.convex.dev/">
-              Get unblocked quickly by searching across the docs, Stack, and
-              Discord chats.
+              Get unblocked quickly by searching across the docs, Stack, and Discord
+              chats.
             </Resource>
           </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 function Resource({
   title,
   children,
   href,
 }: {
-  title: string;
-  children: ReactNode;
-  href: string;
+  title: string
+  children: ReactNode
+  href: string
 }) {
   return (
     <Button
       asChild
       variant="secondary"
-      className="flex h-auto flex-col items-start justify-start gap-4 whitespace-normal p-4 font-normal"
+      className="flex h-auto flex-col items-start justify-start gap-4 p-4 font-normal whitespace-normal"
     >
       <Link href={href}>
         <div className="text-sm font-bold">{title}</div>
         <div className="text-muted-foreground">{children}</div>
       </Link>
     </Button>
-  );
+  )
 }

@@ -1,6 +1,6 @@
-import { PropertyCard } from "@/components/property-card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PropertyCard } from "@/components/property-card"
+import { Badge } from "@/components/ui/badge"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 /*************************************************************************/
 /*  TEST COMPONENTS PAGE
@@ -9,12 +9,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 export default function TestComponentsPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-7xl mx-auto space-y-12">
+      <div className="mx-auto max-w-7xl space-y-12">
         {/* Header */}
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-gray-900">
-            Component Migration Test
-          </h1>
+        <div className="space-y-4 text-center">
+          <h1 className="text-4xl font-bold text-gray-900">Component Migration Test</h1>
           <p className="text-lg text-gray-600">
             Testing Tailwind 4.0 with migrated components
           </p>
@@ -23,7 +21,7 @@ export default function TestComponentsPage() {
         {/* Badges Section */}
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold text-gray-900">Badges</h2>
-          <div className="flex gap-4 flex-wrap">
+          <div className="flex flex-wrap gap-4">
             <Badge>Default</Badge>
             <Badge variant="secondary">Secondary</Badge>
             <Badge variant="destructive">Destructive</Badge>
@@ -34,7 +32,7 @@ export default function TestComponentsPage() {
         {/* Avatars Section */}
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold text-gray-900">Avatars</h2>
-          <div className="flex gap-4 items-center">
+          <div className="flex items-center gap-4">
             <Avatar>
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
               <AvatarFallback>CN</AvatarFallback>
@@ -47,10 +45,8 @@ export default function TestComponentsPage() {
 
         {/* Property Cards Section */}
         <section className="space-y-6">
-          <h2 className="text-2xl font-semibold text-gray-900">
-            Property Cards
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <h2 className="text-2xl font-semibold text-gray-900">Property Cards</h2>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             <PropertyCard
               title="Modern Downtown Apartment"
               price="$2,500/month"
@@ -89,5 +85,5 @@ export default function TestComponentsPage() {
         </section>
       </div>
     </div>
-  );
+  )
 }

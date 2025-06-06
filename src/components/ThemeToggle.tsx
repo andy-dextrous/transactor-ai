@@ -1,11 +1,11 @@
-"use client";
+"use client"
 
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { DesktopIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons";
-import { useTheme } from "next-themes";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { DesktopIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons"
+import { useTheme } from "next-themes"
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme()
   return (
     <ToggleGroup type="single" size="sm" onValueChange={setTheme} value={theme}>
       <ToggleGroupItem value="light" aria-label="Light">
@@ -18,5 +18,5 @@ export function ThemeToggle() {
         <DesktopIcon />
       </ToggleGroupItem>
     </ToggleGroup>
-  );
+  )
 }
