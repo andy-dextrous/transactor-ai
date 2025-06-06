@@ -34,27 +34,27 @@ export function FormElementsSection() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
           {/* Input Fields */}
-          <div className="space-y-6">
-            <h5 className="font-semibold text-neutral-800">Input Fields</h5>
+          <div className="space-y-8">
+            <h6 className="font-semibold text-neutral-800">Input Fields</h6>
 
-            <div className="space-y-2">
+            <div className="space-y-3">
               <Label htmlFor="email">Email Address</Label>
               <Input id="email" type="email" placeholder="Enter email" />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-3">
               <Label htmlFor="password">Password</Label>
               <Input id="password" type="password" placeholder="Enter password" />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-3">
               <Label htmlFor="message">Message</Label>
               <Textarea id="message" placeholder="Enter your message..." rows={3} />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-3">
               <Label htmlFor="search">Search</Label>
               <div className="relative">
                 <Search className="absolute top-3 left-3 h-4 w-4 text-neutral-400" />
@@ -62,19 +62,19 @@ export function FormElementsSection() {
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-3">
               <Label htmlFor="disabled">Disabled Input</Label>
               <Input id="disabled" placeholder="Disabled input" disabled />
             </div>
           </div>
 
           {/* Selection Controls */}
-          <div className="space-y-6">
-            <h5 className="font-semibold text-neutral-800">Selection Controls</h5>
+          <div className="space-y-8">
+            <h6 className="font-semibold text-neutral-800">Selection Controls</h6>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               <Label>Select Option</Label>
-              <Select>
+              <Select defaultValue="option2">
                 <SelectTrigger>
                   <SelectValue placeholder="Choose an option" />
                 </SelectTrigger>
@@ -86,16 +86,16 @@ export function FormElementsSection() {
               </Select>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               <Label>Radio Group</Label>
-              <RadioGroup defaultValue="option1">
+              <RadioGroup defaultValue="option2">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="option1" id="r1" />
                   <Label htmlFor="r1">Option 1</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="option2" id="r2" />
-                  <Label htmlFor="r2">Option 2</Label>
+                  <Label htmlFor="r2">Option 2 (selected)</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="option3" id="r3" />
@@ -104,9 +104,9 @@ export function FormElementsSection() {
               </RadioGroup>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               <Label>Checkboxes</Label>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex items-center space-x-2">
                   <Checkbox id="check1" />
                   <Label htmlFor="check1">Checkbox 1</Label>
@@ -124,12 +124,12 @@ export function FormElementsSection() {
           </div>
 
           {/* Interactive Controls */}
-          <div className="space-y-6">
-            <h5 className="font-semibold text-neutral-800">Interactive Controls</h5>
+          <div className="space-y-8">
+            <h6 className="font-semibold text-neutral-800">Interactive Controls</h6>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               <Label>Switch</Label>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex items-center space-x-3">
                   <Switch id="switch1" />
                   <Label htmlFor="switch1">Enable notifications</Label>
@@ -141,19 +141,19 @@ export function FormElementsSection() {
               </div>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               <Label>Slider</Label>
-              <Slider defaultValue={[50]} max={100} step={1} />
+              <Slider defaultValue={[75]} max={100} step={1} />
               <div className="flex justify-between text-xs text-neutral-500">
                 <span>0</span>
-                <span>50</span>
+                <span>75</span>
                 <span>100</span>
               </div>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               <Label>Toggle Group</Label>
-              <ToggleGroup type="multiple">
+              <ToggleGroup type="multiple" defaultValue={["bold", "italic"]}>
                 <ToggleGroupItem value="bold">
                   <Bold className="h-4 w-4" />
                 </ToggleGroupItem>
@@ -166,9 +166,9 @@ export function FormElementsSection() {
               </ToggleGroup>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               <Label>Toggle Button</Label>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <Toggle>
                   <Bold className="h-4 w-4" />
                 </Toggle>

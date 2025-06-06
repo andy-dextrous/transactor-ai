@@ -10,7 +10,7 @@ import { Shield, AlertCircle, CheckCircle, Star, TrendingUp, Info, X } from "luc
 
 export function BadgesAlertsSection() {
   return (
-    <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+    <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
       {/* Badges */}
       <Card className="card-elevated rounded-2xl">
         <CardHeader>
@@ -21,37 +21,37 @@ export function BadgesAlertsSection() {
             Badges & Status
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-3">
-            <h5 className="font-semibold text-neutral-800">Solid Badges</h5>
-            <div className="flex flex-wrap gap-3">
-              <Badge className="bg-primary rounded-full px-3 py-1 font-semibold text-white">
+        <CardContent className="space-y-8">
+          <div className="space-y-4">
+            <h6 className="font-semibold text-neutral-800">Solid Badges</h6>
+            <div className="flex flex-wrap gap-4">
+              <Badge variant="featured" size="pill">
                 Featured
               </Badge>
-              <Badge className="bg-success-500 rounded-full px-3 py-1 font-semibold text-white">
+              <Badge variant="available" size="pill">
                 Available
               </Badge>
-              <Badge className="bg-warning-500 rounded-full px-3 py-1 font-semibold text-white">
+              <Badge variant="pending" size="pill">
                 Pending
               </Badge>
-              <Badge className="bg-danger-500 rounded-full px-3 py-1 font-semibold text-white">
+              <Badge variant="sold" size="pill">
                 Sold
               </Badge>
             </div>
           </div>
 
-          <div className="space-y-3">
-            <h5 className="font-semibold text-neutral-800">Outlined Badges with Icons</h5>
-            <div className="flex flex-wrap gap-3">
-              <Badge className="bg-success-100 text-success-700 border-success-200 rounded-full border px-3 py-1 font-semibold">
+          <div className="space-y-4">
+            <h6 className="font-semibold text-neutral-800">Outlined Badges with Icons</h6>
+            <div className="flex flex-wrap gap-4">
+              <Badge variant="success-outlined" size="pill">
                 <CheckCircle className="mr-1 h-3 w-3" />
                 Verified
               </Badge>
-              <Badge className="bg-warning-100 text-warning-700 border-warning-200 rounded-full border px-3 py-1 font-semibold">
+              <Badge variant="warning-outlined" size="pill">
                 <Star className="mr-1 h-3 w-3" />
                 Premium
               </Badge>
-              <Badge className="bg-primary-100 text-primary-700 border-primary-200 rounded-full border px-3 py-1 font-semibold">
+              <Badge variant="primary-outlined" size="pill">
                 <TrendingUp className="mr-1 h-3 w-3" />
                 Trending
               </Badge>
@@ -70,31 +70,31 @@ export function BadgesAlertsSection() {
             Alerts & Notifications
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <Alert className="border-primary-200 bg-primary-50 rounded-xl">
-            <Info className="text-primary h-4 w-4" />
-            <AlertDescription className="text-primary-800 font-medium">
+        <CardContent className="space-y-6">
+          <Alert variant="info">
+            <Info className="h-4 w-4" />
+            <AlertDescription variant="info">
               Your property listing has been successfully updated and is now live.
             </AlertDescription>
           </Alert>
 
-          <Alert className="border-success-200 bg-success-50 rounded-xl">
-            <CheckCircle className="text-success-600 h-4 w-4" />
-            <AlertDescription className="text-success-800 font-medium">
+          <Alert variant="success">
+            <CheckCircle className="h-4 w-4" />
+            <AlertDescription variant="success">
               Contract has been signed and submitted for legal review.
             </AlertDescription>
           </Alert>
 
-          <Alert className="border-warning-200 bg-warning-50 rounded-xl">
-            <AlertCircle className="text-warning-600 h-4 w-4" />
-            <AlertDescription className="text-warning-800 font-medium">
+          <Alert variant="warning">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription variant="warning">
               Finance approval deadline is approaching in 3 business days.
             </AlertDescription>
           </Alert>
 
-          <Alert className="border-danger-200 bg-danger-50 rounded-xl">
-            <X className="text-danger-600 h-4 w-4" />
-            <AlertDescription className="text-danger-800 font-medium">
+          <Alert variant="danger">
+            <X className="h-4 w-4" />
+            <AlertDescription variant="danger">
               Payment processing failed. Please update your payment method.
             </AlertDescription>
           </Alert>

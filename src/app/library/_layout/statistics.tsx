@@ -55,7 +55,7 @@ export function StatisticsSection() {
         <div className="mt-8 border-t border-neutral-200 pt-6">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-3">
-              <h5 className="font-semibold text-neutral-800">Technology Stack</h5>
+              <h6 className="font-semibold text-neutral-800">Technology Stack</h6>
               <div className="flex flex-wrap gap-2">
                 <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700">
                   React
@@ -76,7 +76,7 @@ export function StatisticsSection() {
             </div>
 
             <div className="space-y-3">
-              <h5 className="font-semibold text-neutral-800">Features</h5>
+              <h6 className="font-semibold text-neutral-800">Features</h6>
               <div className="space-y-2 text-sm text-neutral-600">
                 <div className="flex items-center gap-2">
                   <div className="bg-success-500 h-2 w-2 rounded-full"></div>

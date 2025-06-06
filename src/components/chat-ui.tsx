@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -25,6 +25,15 @@ export function ChatUI() {
     },
   ])
   const [input, setInput] = useState("")
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
 
   const sendMessage = () => {
     if (!input.trim()) return
@@ -55,12 +64,11 @@ export function ChatUI() {
   return (
     <div className="flex h-[700px] flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-xl">
       {/* Chat Header */}
-      <div className="from-primary-50 to-primary-100 border-primary-200 flex items-center gap-4 border-b bg-gradient-to-r p-6">
+      <div className="bg-primary border-primary-200 flex items-center gap-4 border-b p-6">
         <div className="relative">
-          <Avatar className="ring-primary-200 h-12 w-12 ring-2">
-            <AvatarImage src="/placeholder.svg?height=48&width=48" />
-            <AvatarFallback className="bg-primary font-semibold text-white">
-              <Bot className="h-6 w-6" />
+          <Avatar size="lg" className="ring-secondary bg-secondary ring-2">
+            <AvatarFallback variant="colored" className="bg-secondary/9">
+              <Bot className="h-6 w-6 text-white" />
             </AvatarFallback>
           </Avatar>
           <div className="bg-success-500 absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full border-2 border-white">
@@ -68,9 +76,9 @@ export function ChatUI() {
           </div>
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-neutral-900">PropertyAI Assistant</h3>
-          <p className="text-sm font-medium text-neutral-600">
-            Powered by advanced AI • Online now
+          <h3 className="text-lg font-semibold text-white">PropertyAI Assistant</h3>
+          <p className="text-sm font-medium text-white/90">
+            Powered by Transactor AI • Online now
           </p>
         </div>
       </div>
@@ -84,8 +92,8 @@ export function ChatUI() {
               className={`flex gap-4 ${message.sender === "user" ? "justify-end" : "justify-start"} animate-fade-in`}
             >
               {message.sender === "ai" && (
-                <Avatar className="ring-primary-100 mt-1 h-9 w-9 ring-2">
-                  <AvatarFallback className="bg-primary text-xs font-semibold text-white">
+                <Avatar size="sm" className="ring-primary-100 mt-1 ring-2">
+                  <AvatarFallback variant="colored">
                     <Bot className="h-4 w-4" />
                   </AvatarFallback>
                 </Avatar>
@@ -97,7 +105,11 @@ export function ChatUI() {
                     : "border border-neutral-200 bg-neutral-50 text-neutral-900"
                 }`}
               >
-                <p className="text-sm leading-relaxed font-medium">{message.content}</p>
+                <p
+                  className={`text-sm leading-relaxed font-medium ${message.sender === "user" ? "text-white" : ""}`}
+                >
+                  {message.content}
+                </p>
                 <p
                   className={`mt-2 text-xs ${message.sender === "user" ? "text-primary-100" : "text-neutral-500"}`}
                 >
@@ -108,14 +120,15 @@ export function ChatUI() {
                 </p>
               </div>
               {message.sender === "user" && (
-                <Avatar className="mt-1 h-9 w-9 ring-2 ring-neutral-200">
-                  <AvatarFallback className="bg-neutral-100 text-xs font-semibold text-neutral-700">
+                <Avatar size="sm" className="mt-1 ring-2 ring-neutral-200">
+                  <AvatarFallback variant="neutral">
                     <User className="h-4 w-4" />
                   </AvatarFallback>
                 </Avatar>
               )}
             </div>
           ))}
+          <div ref={messagesEndRef} />
         </div>
       </ScrollArea>
 
@@ -126,12 +139,13 @@ export function ChatUI() {
             value={input}
             onChange={e => setInput(e.target.value)}
             placeholder="Ask about property transactions, legal requirements, or market insights..."
-            className="input-field focus:border-primary focus:ring-primary/20 h-12 flex-1 border-neutral-300 bg-white text-base"
-            onKeyPress={e => e.key === "Enter" && sendMessage()}
+            className="h-12 flex-1 border-neutral-300 bg-white px-4 py-3"
+            onKeyDown={e => e.key === "Enter" && sendMessage()}
           />
           <Button
             onClick={sendMessage}
-            className="btn btn-primary h-12 rounded-xl px-6 font-semibold"
+            variant="rounded"
+            size="xl"
             disabled={!input.trim()}
           >
             <Send className="h-5 w-5" />

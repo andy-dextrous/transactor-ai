@@ -17,8 +17,8 @@ export function TypographySection() {
           Typography
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="space-y-4">
+      <CardContent className="space-y-8">
+        <div className="space-y-6">
           <h1 className="text-neutral-900">Heading 1 - Display Large</h1>
           <h2 className="text-neutral-900">Heading 2 - Display Medium</h2>
           <h3 className="text-neutral-900">Heading 3 - Display Small</h3>
@@ -26,7 +26,7 @@ export function TypographySection() {
           <h5 className="text-neutral-900">Heading 5 - Title Medium</h5>
           <h6 className="text-neutral-900">Heading 6 - Title Small</h6>
         </div>
-        <div className="space-y-3 border-t border-neutral-200 pt-4">
+        <div className="space-y-4 border-t border-neutral-200 pt-6">
           <p className="text-lg font-medium text-neutral-900">
             Body Large - Primary content
           </p>
@@ -38,9 +38,9 @@ export function TypographySection() {
             Caption - Labels and metadata
           </p>
         </div>
-        <div className="space-y-3 border-t border-neutral-200 pt-4">
-          <h5 className="font-semibold text-neutral-800">Font Weights & Styles</h5>
-          <div className="space-y-2">
+        <div className="space-y-4 border-t border-neutral-200 pt-6">
+          <h6 className="font-semibold text-neutral-800">Font Weights & Styles</h6>
+          <div className="space-y-3">
             <p className="font-light text-neutral-700">Light - 300</p>
             <p className="font-normal text-neutral-700">Regular - 400</p>
             <p className="font-medium text-neutral-700">Medium - 500</p>

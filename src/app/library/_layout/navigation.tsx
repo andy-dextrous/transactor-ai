@@ -36,36 +36,60 @@ export function NavigationSection() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-8">
+        <div className="space-y-12">
           {/* Tabs */}
-          <div className="space-y-4">
-            <h5 className="font-semibold text-neutral-800">Tabs</h5>
+          <div className="space-y-6">
+            <h6 className="font-semibold text-neutral-800">Tabs</h6>
             <Tabs defaultValue="tab1" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="tab1">Overview</TabsTrigger>
-                <TabsTrigger value="tab2">Analytics</TabsTrigger>
-                <TabsTrigger value="tab3">Settings</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-3 rounded-lg bg-neutral-100 p-1">
+                <TabsTrigger
+                  value="tab1"
+                  className="data-[state=active]:bg-primary text-neutral-600 transition-all duration-200 hover:text-neutral-900 data-[state=active]:text-white data-[state=active]:shadow-sm"
+                >
+                  Overview
+                </TabsTrigger>
+                <TabsTrigger
+                  value="tab2"
+                  className="data-[state=active]:bg-primary text-neutral-600 transition-all duration-200 hover:text-neutral-900 data-[state=active]:text-white data-[state=active]:shadow-sm"
+                >
+                  Analytics
+                </TabsTrigger>
+                <TabsTrigger
+                  value="tab3"
+                  className="data-[state=active]:bg-primary text-neutral-600 transition-all duration-200 hover:text-neutral-900 data-[state=active]:text-white data-[state=active]:shadow-sm"
+                >
+                  Settings
+                </TabsTrigger>
               </TabsList>
-              <TabsContent value="tab1" className="mt-4 rounded-lg border p-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium">Overview Content</h4>
+              <TabsContent
+                value="tab1"
+                className="mt-6 rounded-lg border border-neutral-200 bg-white p-6"
+              >
+                <div className="space-y-3">
+                  <h4 className="font-medium text-neutral-900">Overview Content</h4>
                   <p className="text-sm text-neutral-600">
                     This is the overview tab content. Display key metrics and summary
                     information here.
                   </p>
                 </div>
               </TabsContent>
-              <TabsContent value="tab2" className="mt-4 rounded-lg border p-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium">Analytics Content</h4>
+              <TabsContent
+                value="tab2"
+                className="mt-6 rounded-lg border border-neutral-200 bg-white p-6"
+              >
+                <div className="space-y-3">
+                  <h4 className="font-medium text-neutral-900">Analytics Content</h4>
                   <p className="text-sm text-neutral-600">
                     Analytics tab shows detailed charts and performance metrics.
                   </p>
                 </div>
               </TabsContent>
-              <TabsContent value="tab3" className="mt-4 rounded-lg border p-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium">Settings Content</h4>
+              <TabsContent
+                value="tab3"
+                className="mt-6 rounded-lg border border-neutral-200 bg-white p-6"
+              >
+                <div className="space-y-3">
+                  <h4 className="font-medium text-neutral-900">Settings Content</h4>
                   <p className="text-sm text-neutral-600">
                     Configure application preferences and user settings.
                   </p>
@@ -75,21 +99,33 @@ export function NavigationSection() {
           </div>
 
           {/* Breadcrumbs */}
-          <div className="space-y-4">
-            <h5 className="font-semibold text-neutral-800">Breadcrumbs</h5>
-            <div className="space-y-3">
+          <div className="space-y-6">
+            <h6 className="font-semibold text-neutral-800">Breadcrumbs</h6>
+            <div className="space-y-4">
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem>
-                    <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                    <BreadcrumbLink
+                      href="/"
+                      className="text-primary hover:text-primary/80 font-medium transition-colors duration-200"
+                    >
+                      Home
+                    </BreadcrumbLink>
                   </BreadcrumbItem>
-                  <BreadcrumbSeparator />
+                  <BreadcrumbSeparator className="text-neutral-400" />
                   <BreadcrumbItem>
-                    <BreadcrumbLink href="/components">Components</BreadcrumbLink>
+                    <BreadcrumbLink
+                      href="/components"
+                      className="text-primary hover:text-primary/80 font-medium transition-colors duration-200"
+                    >
+                      Components
+                    </BreadcrumbLink>
                   </BreadcrumbItem>
-                  <BreadcrumbSeparator />
+                  <BreadcrumbSeparator className="text-neutral-400" />
                   <BreadcrumbItem>
-                    <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+                    <BreadcrumbPage className="font-medium text-neutral-600">
+                      Breadcrumb
+                    </BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
@@ -97,21 +133,36 @@ export function NavigationSection() {
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem>
-                    <BreadcrumbLink href="/">Dashboard</BreadcrumbLink>
+                    <BreadcrumbLink
+                      href="/"
+                      className="text-primary hover:text-primary/80 font-medium transition-colors duration-200"
+                    >
+                      Dashboard
+                    </BreadcrumbLink>
                   </BreadcrumbItem>
-                  <BreadcrumbSeparator />
+                  <BreadcrumbSeparator className="text-neutral-400" />
                   <BreadcrumbItem>
-                    <BreadcrumbLink href="/properties">Properties</BreadcrumbLink>
+                    <BreadcrumbLink
+                      href="/properties"
+                      className="text-primary hover:text-primary/80 font-medium transition-colors duration-200"
+                    >
+                      Properties
+                    </BreadcrumbLink>
                   </BreadcrumbItem>
-                  <BreadcrumbSeparator />
+                  <BreadcrumbSeparator className="text-neutral-400" />
                   <BreadcrumbItem>
-                    <BreadcrumbLink href="/properties/commercial">
+                    <BreadcrumbLink
+                      href="/properties/commercial"
+                      className="text-primary hover:text-primary/80 font-medium transition-colors duration-200"
+                    >
                       Commercial
                     </BreadcrumbLink>
                   </BreadcrumbItem>
-                  <BreadcrumbSeparator />
+                  <BreadcrumbSeparator className="text-neutral-400" />
                   <BreadcrumbItem>
-                    <BreadcrumbPage>Office Building</BreadcrumbPage>
+                    <BreadcrumbPage className="font-medium text-neutral-600">
+                      Office Building
+                    </BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
@@ -119,30 +170,50 @@ export function NavigationSection() {
           </div>
 
           {/* Pagination */}
-          <div className="space-y-4">
-            <h5 className="font-semibold text-neutral-800">Pagination</h5>
-            <div className="space-y-4">
+          <div className="space-y-6">
+            <h6 className="font-semibold text-neutral-800">Pagination</h6>
+            <div className="space-y-6">
               <Pagination>
                 <PaginationContent>
                   <PaginationItem>
-                    <PaginationPrevious href="#" />
+                    <PaginationPrevious
+                      href="#"
+                      className="hover:text-primary hover:bg-primary/5 text-neutral-600 transition-colors duration-200"
+                    />
                   </PaginationItem>
                   <PaginationItem>
-                    <PaginationLink href="#">1</PaginationLink>
+                    <PaginationLink
+                      href="#"
+                      className="hover:text-primary hover:bg-primary/5 text-neutral-600 transition-colors duration-200"
+                    >
+                      1
+                    </PaginationLink>
                   </PaginationItem>
                   <PaginationItem>
-                    <PaginationLink href="#" isActive>
+                    <PaginationLink
+                      href="#"
+                      isActive
+                      className="bg-primary hover:bg-primary/90 border-primary text-white"
+                    >
                       2
                     </PaginationLink>
                   </PaginationItem>
                   <PaginationItem>
-                    <PaginationLink href="#">3</PaginationLink>
+                    <PaginationLink
+                      href="#"
+                      className="hover:text-primary hover:bg-primary/5 text-neutral-600 transition-colors duration-200"
+                    >
+                      3
+                    </PaginationLink>
                   </PaginationItem>
                   <PaginationItem>
-                    <PaginationEllipsis />
+                    <PaginationEllipsis className="text-neutral-400" />
                   </PaginationItem>
                   <PaginationItem>
-                    <PaginationNext href="#" />
+                    <PaginationNext
+                      href="#"
+                      className="hover:text-primary hover:bg-primary/5 text-neutral-600 transition-colors duration-200"
+                    />
                   </PaginationItem>
                 </PaginationContent>
               </Pagination>
@@ -150,25 +221,57 @@ export function NavigationSection() {
               <Pagination>
                 <PaginationContent>
                   <PaginationItem>
-                    <PaginationPrevious href="#" />
+                    <PaginationPrevious
+                      href="#"
+                      className="hover:text-primary hover:bg-primary/5 text-neutral-600 transition-colors duration-200"
+                    />
                   </PaginationItem>
                   <PaginationItem>
-                    <PaginationLink href="#">1</PaginationLink>
+                    <PaginationLink
+                      href="#"
+                      className="hover:text-primary hover:bg-primary/5 text-neutral-600 transition-colors duration-200"
+                    >
+                      1
+                    </PaginationLink>
                   </PaginationItem>
                   <PaginationItem>
-                    <PaginationLink href="#">2</PaginationLink>
+                    <PaginationLink
+                      href="#"
+                      className="hover:text-primary hover:bg-primary/5 text-neutral-600 transition-colors duration-200"
+                    >
+                      2
+                    </PaginationLink>
                   </PaginationItem>
                   <PaginationItem>
-                    <PaginationLink href="#">3</PaginationLink>
+                    <PaginationLink
+                      href="#"
+                      isActive
+                      className="bg-primary hover:bg-primary/90 border-primary text-white"
+                    >
+                      3
+                    </PaginationLink>
                   </PaginationItem>
                   <PaginationItem>
-                    <PaginationLink href="#">4</PaginationLink>
+                    <PaginationLink
+                      href="#"
+                      className="hover:text-primary hover:bg-primary/5 text-neutral-600 transition-colors duration-200"
+                    >
+                      4
+                    </PaginationLink>
                   </PaginationItem>
                   <PaginationItem>
-                    <PaginationLink href="#">5</PaginationLink>
+                    <PaginationLink
+                      href="#"
+                      className="hover:text-primary hover:bg-primary/5 text-neutral-600 transition-colors duration-200"
+                    >
+                      5
+                    </PaginationLink>
                   </PaginationItem>
                   <PaginationItem>
-                    <PaginationNext href="#" />
+                    <PaginationNext
+                      href="#"
+                      className="hover:text-primary hover:bg-primary/5 text-neutral-600 transition-colors duration-200"
+                    />
                   </PaginationItem>
                 </PaginationContent>
               </Pagination>

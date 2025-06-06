@@ -110,7 +110,7 @@ export function IconsSection() {
         </div>
 
         <div className="mt-8 border-t border-neutral-200 pt-6">
-          <h5 className="mb-4 font-semibold text-neutral-800">Icon Usage</h5>
+          <h6 className="mb-6 font-semibold text-neutral-800">Icon Usage</h6>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
               <h6 className="mb-2 font-medium text-neutral-700">Small (16px)</h6>

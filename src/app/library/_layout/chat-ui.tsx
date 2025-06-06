@@ -21,14 +21,14 @@ export function ChatUISection() {
       <CardContent>
         <div className="space-y-4">
           <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
-            <h5 className="mb-4 font-semibold text-neutral-800">
+            <h6 className="mb-6 font-semibold text-neutral-800">
               Interactive Chat Component
-            </h5>
+            </h6>
             <ChatUI />
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <div className="from-primary-50 to-primary-100 rounded-lg border border-neutral-200 bg-gradient-to-br p-4">
+            <div className="bg-primary/10 rounded-lg border border-neutral-200 p-4">
               <div className="mb-2 flex items-center gap-2">
                 <div className="bg-primary h-2 w-2 rounded-full"></div>
                 <span className="text-primary-700 text-sm font-medium">
@@ -40,9 +40,9 @@ export function ChatUISection() {
               </p>
             </div>
 
-            <div className="from-success-50 to-success-100 rounded-lg border border-neutral-200 bg-gradient-to-br p-4">
+            <div className="bg-success/10 rounded-lg border border-neutral-200 p-4">
               <div className="mb-2 flex items-center gap-2">
-                <div className="bg-success-500 h-2 w-2 rounded-full"></div>
+                <div className="bg-success h-2 w-2 rounded-full"></div>
                 <span className="text-success-700 text-sm font-medium">
                   AI-powered responses
                 </span>
@@ -52,9 +52,9 @@ export function ChatUISection() {
               </p>
             </div>
 
-            <div className="from-warning-50 to-warning-100 rounded-lg border border-neutral-200 bg-gradient-to-br p-4">
+            <div className="bg-warning/10 rounded-lg border border-neutral-200 p-4">
               <div className="mb-2 flex items-center gap-2">
-                <div className="bg-warning-500 h-2 w-2 rounded-full"></div>
+                <div className="bg-warning h-2 w-2 rounded-full"></div>
                 <span className="text-warning-700 text-sm font-medium">
                   Rich interactions
                 </span>

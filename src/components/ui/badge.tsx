@@ -21,8 +21,17 @@ const badgeVariants = cva(
           "border-transparent bg-warning text-warning-foreground hover:bg-warning/80",
         neutral:
           "border-transparent bg-neutral-100 text-neutral-800 hover:bg-neutral-200",
-        featured: "border-transparent bg-primary text-white shadow-lg",
-        "price-change": "border-transparent bg-success-500 text-white shadow-lg",
+        featured: "border-transparent bg-primary/10 text-primary-800 hover:bg-primary/20",
+        available:
+          "border-transparent bg-success/10 text-success-800 hover:bg-success/20",
+        pending: "border-transparent bg-warning/10 text-warning-800 hover:bg-warning/20",
+        sold: "border-transparent bg-danger/10 text-danger-800 hover:bg-danger/20",
+        "success-outlined":
+          "bg-success/10 text-success-700 border-success/20 border hover:bg-success/20",
+        "warning-outlined":
+          "bg-warning/10 text-warning-700 border-warning/20 border hover:bg-warning/20",
+        "primary-outlined":
+          "bg-primary/10 text-primary-700 border-primary/20 border hover:bg-primary/20",
       },
       size: {
         default: "rounded-full",

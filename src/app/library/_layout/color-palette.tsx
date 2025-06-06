@@ -38,13 +38,13 @@ export function ColorPaletteSection() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-8">
+        <div className="space-y-12">
           {colors.map((color, colorIndex) => (
-            <div key={colorIndex} className="space-y-3">
-              <h4 className="text-h6 font-semibold text-neutral-900">{color.name}</h4>
-              <div className="grid grid-cols-8 gap-2">
+            <div key={colorIndex} className="space-y-6">
+              <h6 className="text-h6 font-semibold text-neutral-900">{color.name}</h6>
+              <div className="grid grid-cols-8 gap-4">
                 {opacities.map((opacity, opacityIndex) => (
-                  <div key={opacityIndex} className="space-y-2">
+                  <div key={opacityIndex} className="space-y-3">
                     <div
                       className={`h-16 w-full rounded-lg border border-neutral-200 ${color.class} ${opacity.class}`}
                     />

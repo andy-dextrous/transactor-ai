@@ -33,10 +33,10 @@ export function DataDisplaySection() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-8">
+        <div className="space-y-12">
           {/* Table */}
-          <div className="space-y-4">
-            <h5 className="font-semibold text-neutral-800">Table</h5>
+          <div className="space-y-6">
+            <h6 className="font-semibold text-neutral-800">Table</h6>
             <div className="rounded-lg border">
               <Table>
                 <TableHeader>
@@ -54,7 +54,7 @@ export function DataDisplaySection() {
                     <TableCell>john@example.com</TableCell>
                     <TableCell>Admin</TableCell>
                     <TableCell>
-                      <Badge className="bg-success-500 text-white">Active</Badge>
+                      <Badge variant="success">Active</Badge>
                     </TableCell>
                     <TableCell>2 hours ago</TableCell>
                   </TableRow>
@@ -63,7 +63,7 @@ export function DataDisplaySection() {
                     <TableCell>jane@example.com</TableCell>
                     <TableCell>User</TableCell>
                     <TableCell>
-                      <Badge className="bg-warning-500 text-white">Pending</Badge>
+                      <Badge variant="warning">Pending</Badge>
                     </TableCell>
                     <TableCell>1 day ago</TableCell>
                   </TableRow>
@@ -72,7 +72,7 @@ export function DataDisplaySection() {
                     <TableCell>bob@example.com</TableCell>
                     <TableCell>Manager</TableCell>
                     <TableCell>
-                      <Badge className="bg-success-500 text-white">Active</Badge>
+                      <Badge variant="success">Active</Badge>
                     </TableCell>
                     <TableCell>5 minutes ago</TableCell>
                   </TableRow>
@@ -81,7 +81,7 @@ export function DataDisplaySection() {
                     <TableCell>alice@example.com</TableCell>
                     <TableCell>User</TableCell>
                     <TableCell>
-                      <Badge className="bg-neutral-500 text-white">Inactive</Badge>
+                      <Badge variant="neutral">Inactive</Badge>
                     </TableCell>
                     <TableCell>3 weeks ago</TableCell>
                   </TableRow>
@@ -91,8 +91,8 @@ export function DataDisplaySection() {
           </div>
 
           {/* Accordion */}
-          <div className="space-y-4">
-            <h5 className="font-semibold text-neutral-800">Accordion</h5>
+          <div className="space-y-6">
+            <h6 className="font-semibold text-neutral-800">Accordion</h6>
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="item-1">
                 <AccordionTrigger>What is PropertyAI?</AccordionTrigger>

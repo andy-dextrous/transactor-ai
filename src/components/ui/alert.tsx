@@ -4,15 +4,16 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/utilities/cn"
 
 const alertVariants = cva(
-  "relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
+  "relative w-full rounded-xl border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
   {
     variants: {
       variant: {
         default: "bg-background text-foreground",
         destructive: "border-destructive/50 text-destructive [&>svg]:text-destructive",
-        success: "border-success/50 text-success [&>svg]:text-success bg-success/5",
-        warning: "border-warning/50 text-warning [&>svg]:text-warning bg-warning/5",
-        info: "border-primary/50 text-primary [&>svg]:text-primary bg-primary/5",
+        success: "border-success/20 bg-success/10 [&>svg]:text-success-700",
+        warning: "border-warning/20 bg-warning/10 [&>svg]:text-warning-700",
+        info: "border-primary/20 bg-primary/10 [&>svg]:text-primary-700",
+        danger: "border-danger/20 bg-danger/10 [&>svg]:text-danger-700",
       },
       size: {
         default: "p-4",
@@ -26,6 +27,22 @@ const alertVariants = cva(
     },
   }
 )
+
+const alertDescriptionVariants = cva("text-sm [&_p]:leading-relaxed font-medium", {
+  variants: {
+    variant: {
+      default: "",
+      destructive: "",
+      success: "text-success-800",
+      warning: "text-warning-800",
+      info: "text-primary-800",
+      danger: "text-danger-800",
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+  },
+})
 
 function Alert({
   className,
@@ -53,9 +70,13 @@ function AlertTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingEle
 
 function AlertDescription({
   className,
+  variant,
   ...props
-}: React.HTMLAttributes<HTMLParagraphElement>) {
-  return <div className={cn("text-sm [&_p]:leading-relaxed", className)} {...props} />
+}: React.HTMLAttributes<HTMLParagraphElement> &
+  VariantProps<typeof alertDescriptionVariants>) {
+  return (
+    <div className={cn(alertDescriptionVariants({ variant }), className)} {...props} />
+  )
 }
 
 export { Alert, AlertTitle, AlertDescription, alertVariants }

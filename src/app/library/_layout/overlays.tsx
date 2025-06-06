@@ -42,10 +42,10 @@ export function OverlaysSection() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
           {/* Dialog */}
-          <div className="space-y-4">
-            <h5 className="font-semibold text-neutral-800">Dialog</h5>
+          <div className="space-y-6">
+            <h6 className="font-semibold text-neutral-800">Dialog</h6>
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="w-full">Open Dialog</Button>
@@ -79,8 +79,8 @@ export function OverlaysSection() {
           </div>
 
           {/* Tooltip */}
-          <div className="space-y-4">
-            <h5 className="font-semibold text-neutral-800">Tooltip</h5>
+          <div className="space-y-6">
+            <h6 className="font-semibold text-neutral-800">Tooltip</h6>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -96,8 +96,8 @@ export function OverlaysSection() {
           </div>
 
           {/* Popover */}
-          <div className="space-y-4">
-            <h5 className="font-semibold text-neutral-800">Popover</h5>
+          <div className="space-y-6">
+            <h6 className="font-semibold text-neutral-800">Popover</h6>
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full">
@@ -136,8 +136,8 @@ export function OverlaysSection() {
           </div>
 
           {/* Command */}
-          <div className="space-y-4">
-            <h5 className="font-semibold text-neutral-800">Command Palette</h5>
+          <div className="space-y-6">
+            <h6 className="font-semibold text-neutral-800">Command Palette</h6>
             <Command className="rounded-lg border shadow-md">
               <CommandInput placeholder="Search commands..." />
               <CommandList>
