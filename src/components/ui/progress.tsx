@@ -11,7 +11,7 @@ const progressVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-secondary",
+        default: "bg-neutral-100",
         success: "bg-success/20",
         warning: "bg-warning/20",
         destructive: "bg-destructive/20",
