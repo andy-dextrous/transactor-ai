@@ -57,9 +57,9 @@ function AvatarImage({
 const avatarFallbackVariants = cva("flex h-full w-full items-center justify-center", {
   variants: {
     variant: {
-      default: "rounded-full bg-muted",
-      square: "rounded-lg bg-muted",
-      rounded: "rounded-xl bg-muted",
+      default: "rounded-full bg-neutral-100",
+      square: "rounded-lg bg-neutral-100",
+      rounded: "rounded-xl bg-neutral-100",
       colored: "rounded-full bg-primary text-primary-foreground",
       neutral: "rounded-full bg-neutral-100 text-neutral-800",
     },

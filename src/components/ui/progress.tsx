@@ -14,7 +14,7 @@ const progressVariants = cva(
         default: "bg-neutral-100",
         success: "bg-success/20",
         warning: "bg-warning/20",
-        destructive: "bg-destructive/20",
+        destructive: "bg-danger/20",
       },
       size: {
         default: "h-4",
@@ -36,7 +36,7 @@ const progressIndicatorVariants = cva("h-full w-full flex-1 transition-all", {
       default: "bg-primary",
       success: "bg-success",
       warning: "bg-warning",
-      destructive: "bg-destructive",
+      destructive: "bg-danger",
     },
   },
   defaultVariants: {

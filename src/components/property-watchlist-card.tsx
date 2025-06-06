@@ -28,7 +28,7 @@ export function PropertyWatchlistCard({
   imageUrl,
 }: PropertyWatchlistCardProps) {
   return (
-    <div className="flex gap-4 rounded-xl bg-neutral-50 p-4">
+    <div className="flex gap-4 rounded-xl bg-neutral-100 p-4">
       <Image
         src={imageUrl}
         alt={title}

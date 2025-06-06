@@ -25,9 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} antialiased`}>
-        <main className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100">
-          {children}
-        </main>
+        <main className="min-h-screen bg-neutral-100">{children}</main>
       </body>
     </html>
   )

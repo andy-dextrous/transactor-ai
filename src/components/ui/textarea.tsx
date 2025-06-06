@@ -4,12 +4,12 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/utilities/cn"
 
 const textareaVariants = cva(
-  "flex w-full rounded-md border bg-background text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/10 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm resize-vertical",
+  "flex w-full rounded-md border bg-neutral-50 text-base ring-offset-neutral-50 placeholder:text-neutral-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/10 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm resize-vertical",
   {
     variants: {
       variant: {
-        default: "border-input",
-        destructive: "border-destructive focus-visible:ring-destructive",
+        default: "border-neutral-300",
+        destructive: "border-danger focus-visible:ring-danger",
         success: "border-success focus-visible:ring-success",
         warning: "border-warning focus-visible:ring-warning",
       },

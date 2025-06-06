@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/utilities/cn"
 
-const cardVariants = cva("border bg-card text-card-foreground", {
+const cardVariants = cva("border bg-neutral-50 text-neutral-900", {
   variants: {
     variant: {
       default: "rounded-lg shadow-sm",
@@ -88,7 +88,7 @@ function CardTitle({ className, ...props }: React.HTMLAttributes<HTMLDivElement>
 }
 
 function CardDescription({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("text-muted-foreground text-sm", className)} {...props} />
+  return <div className={cn("text-sm text-neutral-600", className)} {...props} />
 }
 
 const cardFooterVariants = cva("flex items-center", {

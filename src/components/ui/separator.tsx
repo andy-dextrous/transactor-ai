@@ -9,8 +9,8 @@ import { cn } from "@/utilities/cn"
 const separatorVariants = cva("shrink-0", {
   variants: {
     variant: {
-      default: "bg-border",
-      muted: "bg-muted",
+      default: "bg-neutral-300",
+      muted: "bg-neutral-100",
       primary: "bg-primary",
       secondary: "bg-secondary",
     },
