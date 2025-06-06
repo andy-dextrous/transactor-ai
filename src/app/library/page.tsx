@@ -19,6 +19,7 @@ import {
   ServiceProvidersSection,
   FinancialToolsSection,
   TransactionManagementSection,
+  DocumentManagementSection,
 } from "./_layout"
 import Image from "next/image"
 
@@ -128,6 +129,11 @@ export default function ComponentLibrary() {
         {/* Transaction Management */}
         <div className="container">
           <TransactionManagementSection />
+        </div>
+
+        {/* Document Management */}
+        <div className="container">
+          <DocumentManagementSection />
         </div>
       </section>
     </div>
