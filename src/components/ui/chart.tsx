@@ -162,7 +162,7 @@ function ChartTooltipContent({
   return (
     <div
       className={cn(
-        "border-border/50 bg-neutral-50 grid min-w-[8rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl",
+        "border-neutral/50 grid min-w-[8rem] items-start gap-1.5 rounded-lg border bg-neutral-50 px-2.5 py-1.5 text-xs shadow-xl",
         className
       )}
     >
@@ -177,7 +177,7 @@ function ChartTooltipContent({
             <div
               key={item.dataKey}
               className={cn(
-                "[&>svg]:text-neutral-600 flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5",
+                "flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5 [&>svg]:text-neutral-600",
                 indicator === "dot" && "items-center"
               )}
             >
@@ -222,7 +222,7 @@ function ChartTooltipContent({
                       </span>
                     </div>
                     {item.value && (
-                      <span className="text-neutral-900 font-mono font-medium tabular-nums">
+                      <span className="font-mono font-medium text-neutral-900 tabular-nums">
                         {item.value.toLocaleString()}
                       </span>
                     )}
@@ -272,7 +272,7 @@ function ChartLegendContent({
           <div
             key={item.value}
             className={cn(
-              "[&>svg]:text-neutral-600 flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3"
+              "flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-neutral-600"
             )}
           >
             {itemConfig?.icon && !hideIcon ? (

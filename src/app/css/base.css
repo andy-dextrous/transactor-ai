@@ -2,7 +2,7 @@
 
 @layer base {
   * {
-    @apply border-border selection:bg-primary selection:text-white;
+    @apply selection:bg-primary border-neutral-100 selection:text-white;
   }
 
   body {

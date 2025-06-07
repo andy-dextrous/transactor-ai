@@ -67,40 +67,40 @@ This tasklist implements a **vertical-first approach** where we build complete e
 
 **🎯 WEEK 1 PRIORITY: Data Model & Backend (URGENT)**
 
-### 2.1 Convex Schema Expansion (CRITICAL - BLOCKING)
+### 2.1 Convex Schema Expansion (✅ COMPLETE)
 
-- [ ] **🔥 URGENT: Expand schema.ts** - Replace basic messages table with comprehensive schema
-- [ ] Define `users` table with buyer persona fields
-- [ ] Create `properties` table for property data
-- [ ] Setup `transactions` table for purchase workflows
-- [ ] Define `conversation_panels` table for context management
-- [ ] Create `agent_tools` table for tool definitions
-- [ ] Setup `tool_executions` table for chat tool history
-- [ ] Create `conversation_context` table for AI memory
-- [ ] Add `financial_profiles` table for user financial data
-- [ ] Create `providers` table for service provider marketplace
-- [ ] Setup `quotes` table for provider quotes
-- [ ] Add `documents` table for file management
+- [x] **🔥 URGENT: Expand schema.ts** - Replace basic messages table with comprehensive schema
+- [x] Define `users` table with buyer persona fields
+- [x] Create `properties` table for property data
+- [x] Setup `transactions` table for purchase workflows
+- [x] Define `conversation_panels` table for context management
+- [x] Create `agent_tools` table for tool definitions
+- [x] Setup `tool_executions` table for chat tool history
+- [x] Create `conversation_context` table for AI memory
+- [x] Add `financial_profiles` table for user financial data
+- [x] Create `providers` table for service provider marketplace
+- [x] Setup `quotes` table for provider quotes
+- [x] Add `documents` table for file management
 
-### 2.2 Database Seeding (ENABLES AI TESTING)
+### 2.2 Database Seeding (✅ COMPLETE)
 
-- [ ] **Seed service providers** - 20-30 providers per major city (conveyancers, brokers, inspectors)
-- [ ] **Seed sample properties** - 50-100 realistic listings across first-home buyer price ranges
-- [ ] **Seed market intelligence** - Current median prices, growth rates for 10-15 key suburbs per city
-- [ ] **Seed financial reference data** - Interest rates, stamp duty rates, first home buyer grants
-- [ ] **Create seeding scripts** - Automated database population for development/testing
-- [ ] **Add sample user personas** - Test profiles with different budgets and preferences
+- [x] **Seed service providers** - 20-30 providers per major city (conveyancers, brokers, inspectors)
+- [x] **Seed sample properties** - 50-100 realistic listings across first-home buyer price ranges
+- [x] **Seed market intelligence** - Current median prices, growth rates for 10-15 key suburbs per city
+- [x] **Seed financial reference data** - Interest rates, stamp duty rates, first home buyer grants
+- [x] **Create seeding scripts** - Automated database population for development/testing
+- [x] **Add sample user personas** - Test profiles with different budgets and preferences
 
-### 2.3 Core Convex Functions (HIGH PRIORITY)
+### 2.3 Core Convex Functions (HIGH PRIORITY) ✅ COMPLETED
 
-- [ ] User management functions (create, update, get)
-- [ ] Property search and management functions
-- [ ] Transaction workflow functions
-- [ ] Conversation context management functions
-- [ ] Tool execution tracking functions
-- [ ] File upload and document management functions
-- [ ] Provider matching and quote functions
-- [ ] Financial calculation functions
+- [x] User management functions (create, update, get)
+- [x] Property search and management functions
+- [x] Transaction workflow functions
+- [x] Conversation context management functions
+- [x] Tool execution tracking functions
+- [x] File upload and document management functions
+- [x] Provider matching and quote functions
+- [x] Financial calculation functions
 
 ### 2.4 AI Agent Setup (HIGH PRIORITY)
 
