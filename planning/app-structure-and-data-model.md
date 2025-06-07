@@ -33,169 +33,386 @@ The application operates as an **AI orchestration platform** where every user in
 
 ## 2. Route Structure & User Journeys
 
-### 2.1 Core Route Architecture
+### 2.1 Chat-Centric Route Architecture
+
+**Design Philosophy**: 80% of user interactions happen in chat interface with contextual panels. Supporting routes handle specific deep-dive tasks.
 
 ```
 /
 ├── (onboarding)/
-│   ├── role-selection        # Initial role picker with chat interface
-│   ├── buyer-onboarding      # Property search & financial readiness
-│   ├── seller-onboarding     # Property details & market analysis
-│   ├── investor-onboarding   # Portfolio goals & strategy
-│   └── professional-setup    # Service provider registration
+│   ├── welcome               # Role selection with chat preview
+│   ├── chat-setup            # Quick preference gathering in chat format
+│   └── professional-verify   # Service provider verification only
 │
-├── dashboard/
-│   ├── chat                  # Persistent AI conversation thread
-│   ├── timeline              # Visual milestone tracker
-│   ├── documents             # AI-enhanced document management
-│   ├── connections           # Professional network & marketplace
-│   ├── finance-lab           # Financial calculators & tools
-│   ├── equity-studio         # Property valuation & equity analysis
-│   └── notifications         # Smart alerts & reminders
+├── dashboard/                # PRIMARY EXPERIENCE (80% of time)
+│   └── [threadId?]           # Main chat interface with contextual panels
+│                             # Layout: Chat (left) + Context Panel (right)
+│                             # Context Panel displays:
+│                             # - Current property details
+│                             # - Transaction timeline & milestones
+│                             # - Active communications
+│                             # - Quick actions & tools
 │
-├── marketplace/
-│   ├── providers/[type]      # Conveyancers, brokers, inspectors
-│   ├── quotes                # Request & manage quotes
-│   └── reviews               # Provider ratings & feedback
+├── tools/                    # STANDALONE UTILITIES (15% of time)
+│   ├── calculator/           # Full-screen financial calculators
+│   │   ├── stamp-duty
+│   │   ├── mortgage
+│   │   ├── equity
+│   │   └── comparison
+│   ├── property-search/      # Advanced property discovery
+│   └── market-insights/      # Detailed market analysis
 │
-├── workflows/
-│   ├── purchase/[propertyId] # End-to-end buying journey
-│   ├── sale/[propertyId]     # End-to-end selling journey
-│   └── finance/[applicationId] # Loan application tracking
+├── manage/                   # ADMINISTRATIVE TASKS (5% of time)
+│   ├── documents/            # Document library & management
+│   ├── transactions/[id]     # Detailed transaction view
+│   ├── connections/          # Professional network management
+│   └── settings/             # Account & preferences
+│
+├── professional/             # PROVIDER-SPECIFIC INTERFACES
+│   ├── conveyancer/          # Conveyancer workflow dashboard
+│   │   ├── clients/
+│   │   ├── leads/
+│   │   └── workflows/
+│   ├── agent/                # Real estate agent dashboard
+│   │   ├── referrals/
+│   │   ├── panels/
+│   │   └── commissions/
+│   └── broker/               # Mortgage broker interface
+│
+├── marketplace/              # PROVIDER DISCOVERY
+│   ├── find/[serviceType]    # Provider search & comparison
+│   └── panels/[id]           # Shared provider recommendations
 │
 └── api/
     ├── convex/               # Convex endpoints
-    ├── webhooks/             # External system integrations
-    └── agents/               # AI agent management
+    ├── webhooks/             # External integrations
+    └── agents/               # AI agent orchestration
 ```
 
-### 2.2 User Journey Flows
+### 2.1.1 Primary Dashboard Layout
+
+**Main Interface Design**:
+
+```typescript
+// Dashboard layout (covers 80% of user interactions)
+const DashboardLayout = ({ threadId }: { threadId?: string }) => {
+  return (
+    <div className="h-screen flex">
+      {/* LEFT: Chat Interface (Primary) */}
+      <div className="flex-1 flex flex-col min-w-[600px]">
+        <ChatHeader />
+        <ChatMessages threadId={threadId} />
+        <ChatInput />
+      </div>
+
+      {/* RIGHT: AI-Controlled Context Panel */}
+      <div className="w-96 border-l bg-slate-50">
+        <ContextualPanel threadId={threadId} />
+      </div>
+    </div>
+  );
+};
+
+// AI-controlled contextual panel
+const ContextualPanel = ({ threadId }) => {
+  const context = useAIContext(threadId);
+
+  return (
+    <ScrollArea className="h-full">
+      <div className="p-4 space-y-4">
+        {/* AI decides what components to show based on conversation */}
+        {context.activeProperty && <PropertySummaryCard />}
+        {context.activeTransaction && <TransactionProgress />}
+        {context.pendingActions && <QuickActions />}
+        {context.recentDocuments && <DocumentQuickAccess />}
+        {context.activeCalculations && <CalculationSummary />}
+        {context.upcomingMilestones && <MilestoneAlerts />}
+      </div>
+    </ScrollArea>
+  );
+};
+```
+
+### 2.2 Chat-Centric User Journey Flows
 
 #### 2.2.1 First-Time Buyer Journey (Chloe, 28)
 
-**Entry Point**: `/` → Role selection → "I want to buy my first home"
+**Entry Point**: `/` → `/onboarding/welcome` → `/dashboard`
 
-**Agent Orchestration Flow**:
+**Chat-Orchestrated Experience Flow**:
 
-1. **OrchestratorAgent** spins up **BuyerAgent** + **FinanceAgent**
-2. **Chat Onboarding** (5-10 minutes):
-   - Financial situation assessment
-   - Deposit savings & borrowing capacity
-   - Property preferences (location, type, budget)
-   - First-home buyer grants eligibility check
+1. **Initial Chat Onboarding** (in `/dashboard`):
 
-**Primary Routes & AI Functions**:
+   ```
+   AI: "Hi Chloe! I'm your property assistant. Let's get you into your first home!
+        What's your budget range?"
+   User: "Around $600-700k in Brisbane"
+   AI: [Instantly calculates stamp duty, shows in right panel]
+       "Great! Here's what that looks like financially..."
+   ```
 
-- `/dashboard/chat` - Persistent conversation with BuyerAgent
-- `/dashboard/finance-lab` - Stamp duty calculators, loan scenarios
-- `/dashboard/timeline` - Auto-generated purchase milestones
-- `/marketplace/providers/conveyancer` - Matched professionals with quotes
+2. **Continuous Chat-Driven Process**:
+   - All property searches happen through chat with results in context panel
+   - Financial calculations appear inline as user discusses scenarios
+   - When ready to proceed, AI guides through next steps without leaving chat
 
-**AI-Powered UX**:
+**Primary Experience**: 95% in `/dashboard` chat interface
 
-- Auto-populated property searches based on chat preferences
-- Proactive alerts: "New listings match your criteria"
-- Financial coaching: "Increase your deposit by $50/week to save $8,000 in stamp duty"
-- Timeline management: "Contract signed! Your cooling-off period ends in 4 days"
+**Supporting Routes** (accessed when needed):
+
+- `/tools/calculator/stamp-duty` - When user wants detailed breakdown
+- `/tools/property-search` - For advanced filtering
+- `/marketplace/find/conveyancer` - When AI suggests professional help
+- `/manage/documents` - For contract uploads and reviews
+
+**AI-Orchestrated UX in Chat**:
+
+- **Inline Tools**: "Let me calculate your borrowing capacity..." [tool result in chat]
+- **Context Panel Updates**: Property details, timeline, calculations auto-populate
+- **Proactive Assistance**: "I found 3 new properties in your area. Want to see them?"
+- **Seamless Handoffs**: "Ready for a conveyancer? I'll show you the best matches..."
+
+**Context Panel Shows**:
+
+- Current property of interest
+- Financial summary (borrowing capacity, deposit, costs)
+- Next steps timeline
+- Saved properties and calculations
 
 #### 2.2.2 Upgrader Seller Journey (Raj, 41)
 
-**Entry Point**: `/` → "I want to sell and buy simultaneously"
+**Entry Point**: `/` → `/dashboard` → "I want to sell and buy simultaneously"
 
-**Agent Orchestration Flow**:
+**Chat-Orchestrated Experience Flow**:
 
-1. **OrchestratorAgent** creates linked **SellerAgent** + **BuyerAgent**
-2. **Dual Timeline Management** - coordinated settlement dates
-3. **EquityAgent** calculates available capital from current property
+1. **Dual-Transaction Chat Management**:
 
-**Key Routes & AI Functions**:
+   ```
+   AI: "I see you want to upgrade! Let me value your current property first..."
+       [Equity calculator appears in chat + context panel shows property details]
+   User: "My place is worth about $850k, I owe $400k"
+   AI: "Perfect! You have $450k equity. Here's your upgrade potential..."
+       [Shows buying power + settlement coordination timeline]
+   ```
 
-- `/dashboard/equity-studio` - Current property valuation & usable equity
-- `/workflows/sale/[currentProperty]` - Sale timeline with marketing milestones
-- `/workflows/purchase/[targetProperty]` - Purchase timeline synchronized with sale
-- `/dashboard/chat` - Unified conversation managing both transactions
+2. **Synchronized Timeline Management**:
+   - Single chat thread manages both sale and purchase
+   - Context panel toggles between current property (sale) and target property (purchase)
+   - AI proactively warns about settlement timing risks
 
-**AI-Powered UX**:
+**Primary Experience**: 90% in `/dashboard` chat interface
 
-- Cross-transaction risk monitoring: "Your sale settlement is 2 weeks after purchase - consider bridging finance"
-- Market timing advice: "List now for spring market, target purchase in 6 weeks"
-- Equity optimization: "Your home's value increased $80K - here's how to leverage this"
+**Supporting Routes** (accessed when needed):
+
+- `/tools/calculator/equity` - Detailed equity and upgrade scenarios
+- `/manage/transactions/sale-[id]` - Deep sale progress tracking
+- `/manage/transactions/purchase-[id]` - Deep purchase progress tracking
+- `/marketplace/find/agent` - When ready to list current property
+
+**AI-Orchestrated UX in Chat**:
+
+- **Risk Monitoring**: "Settlement dates are misaligned - here are 3 solutions..."
+- **Market Intelligence**: "List next week for optimal spring market timing"
+- **Equity Optimization**: "Your home value increased $35k - upgrade budget now $720k"
+- **Coordinated Actions**: "I'll update both conveyancers about the new settlement date"
+
+**Context Panel Shows**:
+
+- Toggle between current property (sale) and target property (purchase)
+- Coordinated timeline showing both transactions
+- Equity calculation and available upgrade budget
+- Risk alerts and recommended actions
 
 #### 2.2.3 Professional User Journey (Kylie, Conveyancer)
 
-**Entry Point**: `/` → "I'm a conveyancer seeking leads"
+**Entry Point**: `/` → `/professional/conveyancer` (Dedicated Professional Interface)
 
-**Agent Orchestration Flow**:
+**Professional Dashboard Experience**:
 
-1. **ProviderAgent** manages professional profile & availability
-2. **MatchAgent** surfaces relevant client opportunities
-3. **WorkflowAgent** automates client communication & milestone updates
+Unlike consumers, professionals need specialized dashboards rather than chat-first interfaces. Kylie's experience centers on:
 
-**Primary Routes & AI Functions**:
+1. **Lead Management Dashboard** (`/professional/conveyancer/leads`):
 
-- `/dashboard/leads` - AI-matched client opportunities
-- `/dashboard/workflows` - Active client transaction tracking
-- `/marketplace/profile` - Professional profile & rating management
-- `/dashboard/chat` - Multi-client conversation management
+   - AI-matched client opportunities with qualification scores
+   - One-click quote generation and client contact
+   - Automated follow-up and conversion tracking
 
-**AI-Powered UX**:
+2. **Client Transaction Dashboard** (`/professional/conveyancer/clients`):
 
-- Lead qualification: "3 high-match buyers need conveyancing in your area"
-- Automated client updates: "Milestone reached - client automatically notified"
-- Workload optimization: "Current capacity allows 2 more clients this month"
+   - Multi-client timeline view with milestone tracking
+   - Automated client communication (AI-generated updates)
+   - Document management and workflow automation
+
+3. **AI Assistant Integration**:
+   - Chat widget available on all professional pages
+   - Quick actions: "Create quote for Brisbane buyer, $750k property"
+   - Context-aware: AI knows current client workload and capacity
+
+**Supporting Routes**:
+
+- `/marketplace/panels/create` - Create curated conveyancer panels for agents
+- `/professional/conveyancer/settings` - Availability, pricing, service areas
+- `/manage/documents` - Legal document templates and client files
+
+**AI-Powered Professional UX**:
+
+- **Lead Intelligence**: "High-value lead: $2M property, pre-approved finance, 85% conversion probability"
+- **Capacity Management**: "Current workload 70% - can take 2 more clients this month"
+- **Automated Updates**: "All 8 clients automatically notified of milestone progress"
+- **Performance Insights**: "Your response time improved 40% - leads up 15% this month"
 
 #### 2.2.4 Post-Purchase Legal Support Journey (Michael, Recent Buyer)
 
-**Entry Point**: `/` → "I need legal help after buying my property"
+**Entry Point**: `/` → `/dashboard` → "I need help with a legal issue after settlement"
 
-**Agent Orchestration Flow**:
+**Chat-Orchestrated Experience Flow**:
 
-1. **OrchestratorAgent** spins up **LegalAgent** + **ConveyancerAgent**
-2. **Issue Analysis**: AI-powered assessment of legal problem scope
-3. **Document Review**: Automated analysis of purchase contracts and related documents
+1. **Issue Assessment Through Chat**:
 
-**Primary Routes & AI Functions**:
+   ```
+   AI: "I can help with post-purchase legal issues. What's happening?"
+   User: "The pool safety certificate wasn't provided and council is threatening fines"
+   AI: [Analyzes issue type] "This is a seller breach issue. Let me check your contract..."
+       [Document analysis appears in chat + contract details in context panel]
+   ```
 
-- `/dashboard/chat` - Legal issue consultation with specialized agent
-- `/dashboard/legal/document-analysis` - AI-powered contract and document review
-- `/marketplace/providers/legal-conveyancer` - Specialized post-purchase conveyancer matching
-- `/dashboard/legal/resolution-strategy` - AI-guided dispute resolution planning
+2. **Guided Resolution Process**:
+   - AI analyzes uploaded contract and identifies relevant clauses
+   - Context panel shows timeline of actions and legal deadlines
+   - Professional matching happens inline when legal help is needed
 
-**AI-Powered UX**:
+**Primary Experience**: 85% in `/dashboard` chat interface
 
-- Issue categorization: "This appears to be a title defect - here's what you need to know"
-- Document analysis: "Your contract includes clause 18.3 which protects you in this situation"
-- Professional matching: "3 conveyancers specialize in post-purchase disputes in your area"
-- Timeline management: "Statutory time limit for this claim is 45 days - act now"
+**Supporting Routes** (when detailed review needed):
+
+- `/manage/documents` - Upload and organize legal documents
+- `/marketplace/find/legal-conveyancer` - Specialized post-purchase legal help
+- `/manage/transactions/[id]` - Original transaction details review
+
+**AI-Orchestrated Legal UX**:
+
+- **Issue Classification**: "This is a contract breach - you have strong legal standing"
+- **Document Intelligence**: "Clause 18.3 requires seller to provide certificate before settlement"
+- **Timeline Alerts**: "Statutory limitation period: 43 days remaining"
+- **Resolution Strategy**: "I recommend: 1) Formal notice, 2) Professional help if needed"
 
 #### 2.2.5 Equity Investment Journey (Sarah, Homeowner Investor)
 
-**Entry Point**: `/` → "I want to use my home's equity to invest"
+**Entry Point**: `/` → `/dashboard` → "I want to use my home equity to buy an investment property"
 
-**Agent Orchestration Flow**:
+**Chat-Orchestrated Experience Flow**:
 
-1. **OrchestratorAgent** creates **EquityAgent** + **InvestmentAgent** + **FinanceAgent**
-2. **Equity Assessment**: Current property valuation and available equity calculation
-3. **Investment Strategy**: AI-powered investment opportunity analysis based on risk profile
+1. **Equity Discovery Through Chat**:
 
-**Primary Routes & AI Functions**:
+   ```
+   AI: "Let's unlock your property investment potential! What's your current home worth?"
+   User: "About $950k, I owe $420k on it"
+   AI: [Equity calculator executes] "Excellent! You have $530k equity. Here's your investment power..."
+       [Shows borrowing capacity + investment options in context panel]
+   ```
 
-- `/dashboard/equity-studio/current-property` - Real-time equity analysis and growth tracking
-- `/dashboard/investment-strategy` - Personalized investment recommendations
-- `/dashboard/finance-lab/equity-lending` - Comparison of equity release products
-- `/marketplace/providers/investment-broker` - Specialized investment finance brokers
-- `/dashboard/portfolio-manager` - Integrated multi-property portfolio management
+2. **Investment Strategy Development**:
+   - All investment scenarios explored through conversational interface
+   - Context panel continuously updates with portfolio projections
+   - Property search and finance options presented inline
 
-**AI-Powered UX**:
+**Primary Experience**: 90% in `/dashboard` chat interface
 
-- Equity tracking: "Your home equity increased $15K this quarter - investment capacity up 20%"
-- Risk analysis: "Based on your profile, consider 70% equity utilization maximum"
-- Market timing: "Current investment market conditions favor 2-bedroom apartments in growth suburbs"
-- Portfolio optimization: "Balance your portfolio with this property type to reduce risk by 15%"
+**Supporting Routes** (for detailed analysis):
+
+- `/tools/calculator/equity` - Detailed equity and leveraging scenarios
+- `/tools/property-search` - Investment property discovery with filters
+- `/marketplace/find/investment-broker` - Specialized investment finance
+
+**AI-Orchestrated Investment UX**:
+
+- **Equity Intelligence**: "Your home gained $45k value - investment capacity increased 25%"
+- **Strategy Optimization**: "Based on your goals, consider 65% LVR for optimal cash flow"
+- **Market Guidance**: "Current conditions favor 2-bed apartments in growth corridors"
+- **Risk Management**: "This strategy reduces portfolio risk by 20% while maintaining returns"
+
+### 2.3 AI-Controlled Contextual Panel System
+
+**The contextual panel** (right side) is dynamically controlled by AI based on the conversation context. This creates a seamless experience where relevant information appears automatically.
+
+#### 2.3.1 Context Panel Components
+
+```typescript
+// AI determines which components to display based on conversation state
+type ContextPanelComponent =
+  | "PropertySummary" // Current property of interest details
+  | "TransactionProgress" // Timeline and milestones
+  | "FinancialSummary" // Calculations and borrowing capacity
+  | "DocumentQuickAccess" // Recent/relevant documents
+  | "ProviderMatches" // Recommended professionals
+  | "CalculationResults" // Live calculator outputs
+  | "MilestoneAlerts" // Upcoming deadlines and actions
+  | "MarketInsights" // Property/market analysis
+  | "CommunicationHub" // Messages and notifications
+  | "QuickActions" // Context-relevant action buttons
+
+// AI Context Manager
+const ContextPanelManager = {
+  analyzeConversation: (threadId: string) => {
+    // AI analyzes recent messages to determine relevant context
+    return {
+      activeProperty: extractPropertyFromConversation(),
+      currentPhase: determineTransactionPhase(),
+      recentCalculations: getRecentToolExecutions(),
+      pendingActions: identifyRequiredActions(),
+      relevantDocuments: findRelevantDocuments(),
+    }
+  },
+
+  determineComponents: (context: ConversationContext) => {
+    // Returns ordered list of components to display
+    const components = []
+
+    if (context.activeProperty) components.push("PropertySummary")
+    if (context.currentPhase === "purchase") components.push("TransactionProgress")
+    if (context.recentCalculations.length > 0) components.push("CalculationResults")
+    if (context.pendingActions.length > 0) components.push("QuickActions")
+
+    return components
+  },
+}
+```
+
+#### 2.3.2 Example Context Panel States
+
+**During Property Search:**
+
+```typescript
+// Context Panel Shows:
+<PropertySummary property={currentProperty} />
+<FinancialSummary calculations={mortgageCalc} />
+<MarketInsights suburb={currentProperty.suburb} />
+<QuickActions actions={["Save Property", "Calculate Stamp Duty", "Find Conveyancer"]} />
+```
+
+**During Transaction Management:**
+
+```typescript
+// Context Panel Shows:
+<TransactionProgress transaction={activeTransaction} />
+<MilestoneAlerts milestones={upcomingMilestones} />
+<DocumentQuickAccess documents={transactionDocuments} />
+<CommunicationHub messages={professionalCommunications} />
+```
+
+**During Financial Planning:**
+
+```typescript
+// Context Panel Shows:
+<FinancialSummary borrowingCapacity={calculations} />
+<CalculationResults results={recentCalculations} />
+<ProviderMatches serviceType="mortgage-broker" />
+<QuickActions actions={["Refine Calculation", "Get Pre-Approval", "Save Scenario"]} />
+```
 
 ---
 
-## 3. Convex Data Model
+## 3. Convex Data Model (Chat-Centric)
 
 ### 3.1 Core Entity Tables
 
@@ -342,6 +559,46 @@ The application operates as an **AI orchestration platform** where every user in
 ```typescript
 // Using Convex Agent component's built-in thread and message management
 // Leverages components.agent.threads and components.agent.messages tables
+
+// conversation_panels table - Manages contextual panel state
+{
+  _id: Id<"conversation_panels">,
+  threadId: string,        // Convex agent thread ID
+  userId: Id<"users">,
+  currentContext: {
+    activeProperty?: {
+      id: string,
+      address: string,
+      price: number,
+      type: "target" | "current" | "comparison"
+    },
+    activeTransaction?: {
+      id: Id<"transactions">,
+      phase: "search" | "contract" | "finance" | "settlement" | "ownership",
+      priority: "high" | "medium" | "low"
+    },
+    activeCalculations: [{
+      toolName: string,
+      executionId: Id<"tool_executions">,
+      priority: number,
+      displayType: "summary" | "detailed"
+    }],
+    pendingActions: [{
+      actionType: "upload_document" | "contact_provider" | "approve_milestone" | "schedule_inspection",
+      priority: "urgent" | "important" | "normal",
+      dueDate?: number,
+      description: string
+    }]
+  },
+  panelComponents: [{
+    componentType: "PropertySummary" | "TransactionProgress" | "FinancialSummary" | "QuickActions" | "etc",
+    priority: number,
+    isVisible: boolean,
+    config: object  // Component-specific configuration
+  }],
+  lastUpdated: number,
+  autoUpdated: boolean     // Whether this was AI-updated or user-configured
+}
 
 // agent_tools table - Custom tool definitions for property domain
 {
@@ -1770,23 +2027,31 @@ This comprehensive tool integration ensures that users can access powerful prope
 
 ---
 
-## 7. Implementation Roadmap
+## 7. Implementation Roadmap (Chat-Centric)
 
-### 6.1 Phase 1: Core Agent Framework (Weeks 1-4)
+### 7.1 Phase 1: Chat-First Foundation (Weeks 1-4)
 
 **Deliverables**:
 
-- OrchestratorAgent with basic routing
-- Simple BuyerAgent and SellerAgent implementations
-- Chat interface with persistent threads
-- Basic property and user data models
+- Core chat interface with contextual panels (`/dashboard`)
+- Basic AI agent with tool calling capabilities
+- Context panel management system
+- Simple onboarding flow (`/onboarding/welcome`)
 
 **Technical Focus**:
 
-- Convex agent infrastructure setup
-- Message persistence and vector embeddings
-- Real-time subscription architecture
-- Authentication and role-based access
+- Convex agent components setup with enhanced memory
+- Chat-to-context panel communication architecture
+- Basic tool integration (mortgage calculator, property search)
+- Real-time panel state synchronization
+- Mobile-responsive chat layout
+
+**Success Metrics**:
+
+- Chat interface handles 90% of user interactions
+- Context panel updates automatically based on conversation
+- Tool results display inline within 3 seconds
+- Mobile chat experience fully functional
 
 ### 6.2 Phase 2: Transaction Workflows (Weeks 5-8)
 
