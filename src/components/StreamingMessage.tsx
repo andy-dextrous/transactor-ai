@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Bot } from "lucide-react"
 
 /*************************************************************************/
 /*  STREAMING MESSAGE COMPONENT
@@ -6,50 +7,40 @@ import { useState, useEffect } from "react"
 
 interface StreamingMessageProps {
   streamId: string
-  isVisible: boolean
+  threadId: string
 }
 
-export function StreamingMessage({ streamId, isVisible }: StreamingMessageProps) {
-  const [text, setText] = useState("")
-  const [isStreaming, setIsStreaming] = useState(true)
-
-  useEffect(() => {
-    if (!isVisible || !streamId) return
-
-    // For now, simulate streaming with a simple timer
-    // TODO: Replace with actual streaming from Convex
-    let currentText = ""
-    const simulatedResponse = "I'm processing your request..."
-
-    const streamingInterval = setInterval(() => {
-      if (currentText.length < simulatedResponse.length) {
-        currentText += simulatedResponse[currentText.length]
-        setText(currentText)
-      } else {
-        setIsStreaming(false)
-        clearInterval(streamingInterval)
-      }
-    }, 100)
-
-    return () => clearInterval(streamingInterval)
-  }, [streamId, isVisible])
-
-  if (!isVisible) return null
-
+export function StreamingMessage({ streamId, threadId }: StreamingMessageProps) {
   return (
-    <div className="flex justify-start">
-      <div className="max-w-[80%] rounded-lg border bg-gray-100 px-4 py-3 text-gray-900">
-        <div className="whitespace-pre-wrap">{text}</div>
-        {isStreaming && (
-          <div className="mt-2 flex items-center">
+    <div className="animate-fade-in flex justify-start gap-4">
+      <Avatar size="sm" className="ring-primary-100 mt-1 ring-2">
+        <AvatarFallback variant="colored">
+          <Bot className="h-4 w-4" />
+        </AvatarFallback>
+      </Avatar>
+      <div className="max-w-[85%] rounded-2xl border border-neutral-200 bg-neutral-50 px-5 py-4 text-neutral-900 shadow-sm">
+        <div className="text-sm leading-relaxed font-medium">
+          <div className="flex items-center gap-2">
             <div className="flex space-x-1">
-              <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400"></div>
-              <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400 delay-100"></div>
-              <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400 delay-200"></div>
+              <div className="bg-primary h-2 w-2 animate-bounce rounded-full"></div>
+              <div
+                className="bg-primary h-2 w-2 animate-bounce rounded-full"
+                style={{ animationDelay: "0.1s" }}
+              ></div>
+              <div
+                className="bg-primary h-2 w-2 animate-bounce rounded-full"
+                style={{ animationDelay: "0.2s" }}
+              ></div>
             </div>
-            <span className="ml-2 text-xs text-gray-500">AI is thinking...</span>
+            <span className="text-xs text-neutral-500">AI is thinking...</span>
           </div>
-        )}
+        </div>
+        <p className="mt-2 text-xs text-neutral-500">
+          {new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </p>
       </div>
     </div>
   )

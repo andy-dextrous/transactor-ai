@@ -2,49 +2,64 @@
 /*  MESSAGE LIST COMPONENT
 /*************************************************************************/
 
-interface Message {
-  _id: string
-  content: string
-  role: "user" | "assistant"
-  _creationTime: number
-}
+import { toUIMessages } from "@convex-dev/agent/react"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Bot, User } from "lucide-react"
 
 interface MessageListProps {
   messages: Message[]
 }
 
 export function MessageList({ messages }: MessageListProps) {
-  if (!messages || messages.length === 0) {
-    return (
-      <div className="flex h-32 items-center justify-center text-gray-500">
-        Start a conversation by asking about properties, settlements, or market data...
-      </div>
-    )
-  }
+  const uiMessages = toUIMessages(messages)
 
   return (
-    <div className="flex flex-col space-y-4">
-      {messages.map(message => (
+    <div className="space-y-6">
+      {uiMessages.map(message => (
         <div
-          key={message._id}
-          className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+          key={message.key}
+          className={`flex gap-4 ${message.role === "user" ? "justify-end" : "justify-start"} animate-fade-in`}
         >
+          {message.role === "assistant" && (
+            <Avatar size="sm" className="ring-primary-100 mt-1 ring-2">
+              <AvatarFallback variant="colored">
+                <Bot className="h-4 w-4" />
+              </AvatarFallback>
+            </Avatar>
+          )}
           <div
-            className={`max-w-[80%] rounded-lg px-4 py-3 ${
+            className={`max-w-[85%] rounded-2xl px-5 py-4 shadow-sm ${
               message.role === "user"
-                ? "bg-blue-600 text-white"
-                : "border bg-gray-100 text-gray-900"
+                ? "bg-primary shadow-primary/20 text-white"
+                : "border border-neutral-200 bg-neutral-50 text-neutral-900"
             }`}
           >
-            <div className="whitespace-pre-wrap">{message.content}</div>
             <div
-              className={`mt-2 text-xs ${
-                message.role === "user" ? "text-blue-100" : "text-gray-500"
-              }`}
+              className={`text-sm leading-relaxed font-medium ${message.role === "user" ? "text-white" : ""}`}
             >
-              {new Date(message._creationTime).toLocaleTimeString()}
+              {typeof message.content === "string" ? (
+                <p>{message.content}</p>
+              ) : (
+                message.content
+              )}
             </div>
+            <p
+              className={`mt-2 text-xs ${message.role === "user" ? "text-primary-100" : "text-neutral-500"}`}
+            >
+              {new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
           </div>
+          {message.role === "user" && (
+            <Avatar size="sm" className="mt-1 ring-2 ring-neutral-200">
+              <AvatarFallback variant="neutral">
+                <User className="h-4 w-4" />
+              </AvatarFallback>
+            </Avatar>
+          )}
         </div>
       ))}
     </div>

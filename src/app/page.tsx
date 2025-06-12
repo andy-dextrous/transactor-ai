@@ -1,232 +1,281 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { useChat } from "@/hooks/useChat"
-import { MessageList } from "@/components/MessageList"
-import { StreamingMessage } from "@/components/StreamingMessage"
-
-/*************************************************************************/
-/*  MAIN CHAT PAGE
-/*************************************************************************/
+import { useState } from "react"
+import { useQuery, useMutation, useAction } from "convex/react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Send, Bot, User, Sparkles, Plus, MessageSquare } from "lucide-react"
+import { api } from "../../convex/_generated/api"
 
 export default function ChatPage() {
   const [currentThreadId, setCurrentThreadId] = useState<string | null>(null)
-  const [streamId, setStreamId] = useState<string | null>(null)
-  const [isStreaming, setIsStreaming] = useState(false)
-  const [inputValue, setInputValue] = useState("")
-  const [localMessages, setLocalMessages] = useState<any[]>([])
+  const [input, setInput] = useState("")
+  const [isGenerating, setIsGenerating] = useState(false)
 
-  const { sendMessage } = useChat(currentThreadId)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  // Convex hooks
+  const createThread = useMutation(api.messages.createThread)
+  const generateResponse = useAction(api.messages.generateResponse)
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
-
-  useEffect(() => {
-    scrollToBottom()
-  }, [localMessages, isStreaming])
+  const messages = useQuery(
+    api.messages.listThreadMessages,
+    currentThreadId
+      ? {
+          threadId: currentThreadId,
+          paginationOpts: { cursor: null, numItems: 50 },
+        }
+      : "skip"
+  )
 
   const handleSendMessage = async () => {
-    if (!inputValue.trim() || isStreaming) return
+    if (!input.trim()) return
 
-    const userMessage = {
-      _id: `user-${Date.now()}`,
-      content: inputValue.trim(),
-      role: "user" as const,
-      _creationTime: Date.now(),
+    console.log("Sending message:", input)
+    let threadId = currentThreadId
+
+    // Create thread if this is the first message
+    if (!threadId) {
+      console.log("Creating new thread...")
+      const result = await createThread({})
+      threadId = result.threadId
+      setCurrentThreadId(threadId)
+      console.log("Thread created:", threadId)
     }
 
-    // Add user message immediately
-    setLocalMessages(prev => [...prev, userMessage])
-
-    const messageText = inputValue.trim()
-    setInputValue("")
-    setIsStreaming(true)
+    const userInput = input
+    setInput("")
+    setIsGenerating(true)
 
     try {
-      const result = await sendMessage(messageText)
-      setCurrentThreadId(result.threadId)
-      setStreamId(result.streamId)
-
-      // Simulate AI response for now
-      setTimeout(() => {
-        const aiMessage = {
-          _id: `ai-${Date.now()}`,
-          content: `I received your message: "${messageText}". I'm a property concierge assistant with access to real Australian property data. I can help you search properties, check settlement status, analyze documents, and get market insights. Try asking me about properties in Melbourne CBD or Bondi Beach!`,
-          role: "assistant" as const,
-          _creationTime: Date.now(),
-        }
-        setLocalMessages(prev => [...prev, aiMessage])
-        setIsStreaming(false)
-        setStreamId(null)
-      }, 2000)
+      // Generate AI response
+      console.log("Generating response for:", userInput)
+      const response = await generateResponse({
+        threadId,
+        prompt: userInput,
+      })
+      console.log("Got response:", response)
     } catch (error) {
-      console.error("Error sending message:", error)
-      setIsStreaming(false)
+      console.error("Error generating response:", error)
+    } finally {
+      setIsGenerating(false)
     }
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      handleSendMessage()
-    }
+  const handleNewConversation = () => {
+    setCurrentThreadId(null)
+    setInput("")
+    setIsGenerating(false)
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-neutral-100">
       {/* Sidebar */}
-      <div className="w-80 border-r bg-white shadow-sm">
-        <div className="border-b p-6">
-          <h1 className="text-xl font-semibold text-gray-900">Property Concierge AI</h1>
-          <p className="mt-1 text-sm text-gray-600">Your Australian property assistant</p>
-        </div>
-
-        <div className="p-4">
-          <div className="space-y-2">
-            <div
-              className={`cursor-pointer rounded-lg border border-dashed border-gray-300 p-3 hover:bg-gray-50 ${
-                !currentThreadId ? "border-blue-200 bg-blue-50" : ""
-              }`}
-              onClick={() => {
-                setCurrentThreadId(null)
-                setLocalMessages([])
-                setStreamId(null)
-                setIsStreaming(false)
-              }}
-            >
-              <div className="font-medium text-gray-900">+ New Conversation</div>
-              <div className="text-xs text-gray-500">
-                Start fresh chat about properties
-              </div>
+      <div className="w-80 border-r border-neutral-200 bg-white shadow-sm">
+        {/* Sidebar Header */}
+        <div className="bg-primary border-primary-200 flex items-center gap-4 border-b p-6">
+          <div className="relative">
+            <Avatar size="lg" className="ring-secondary bg-secondary ring-2">
+              <AvatarFallback variant="colored" className="bg-secondary/9">
+                <Bot className="h-6 w-6 text-white" />
+              </AvatarFallback>
+            </Avatar>
+            <div className="bg-success-500 absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full border-2 border-white">
+              <Sparkles className="h-2 w-2 text-white" />
             </div>
-
-            {currentThreadId && (
-              <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
-                <div className="font-medium text-gray-900">Current Chat</div>
-                <div className="text-xs text-gray-500">
-                  Thread: {currentThreadId.slice(0, 8)}...
-                </div>
-              </div>
-            )}
           </div>
-
-          <div className="mt-6 rounded-lg bg-gray-50 p-4">
-            <h3 className="mb-2 font-medium text-gray-900">Try asking about:</h3>
-            <ul className="space-y-1 text-sm text-gray-600">
-              <li>• Properties in Melbourne CBD</li>
-              <li>• Settlement status updates</li>
-              <li>• Market insights for Bondi Beach</li>
-              <li>• Document analysis</li>
-            </ul>
+          <div>
+            <h3 className="text-lg font-semibold text-white">PropertyAI Assistant</h3>
+            <p className="text-sm font-medium text-white/90">
+              Powered by Transactor AI • Online now
+            </p>
           </div>
         </div>
+
+        {/* Thread List */}
+        <ScrollArea className="flex-1 p-4">
+          <div className="space-y-3">
+            {/* New Conversation Button */}
+            <Button
+              onClick={handleNewConversation}
+              variant="outline"
+              className="w-full justify-start gap-3"
+            >
+              <Plus className="h-4 w-4" />
+              New Conversation
+            </Button>
+
+            {/* Current Thread Display */}
+            {currentThreadId && (
+              <Button variant="default" className="h-auto w-full justify-start gap-3 p-3">
+                <MessageSquare className="h-4 w-4" />
+                <div className="min-w-0 flex-1 text-left">
+                  <div className="truncate font-medium">Current Chat</div>
+                  <div className="truncate text-xs text-neutral-500">
+                    Thread ID: {currentThreadId.slice(0, 8)}...
+                  </div>
+                </div>
+              </Button>
+            )}
+
+            {/* Usage Hints */}
+            <div className="mt-6 rounded-lg bg-neutral-50 p-4">
+              <h4 className="mb-2 text-sm font-medium text-neutral-900">
+                Try asking about:
+              </h4>
+              <ul className="space-y-1 text-xs text-neutral-600">
+                <li>• Properties in Melbourne CBD</li>
+                <li>• Settlement status updates</li>
+                <li>• Market insights for suburbs</li>
+                <li>• Document analysis</li>
+              </ul>
+            </div>
+          </div>
+        </ScrollArea>
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex flex-1 flex-col">
-        {/* Header */}
-        <div className="border-b bg-white px-6 py-4">
-          <h2 className="text-lg font-medium text-gray-900">
-            {currentThreadId ? "Property Chat" : "Welcome"}
+      <div className="flex flex-1 flex-col overflow-hidden rounded-l-2xl bg-white shadow-xl">
+        {/* Chat Header */}
+        <div className="border-b border-neutral-200 bg-white p-6">
+          <h2 className="text-lg font-semibold text-neutral-900">
+            {currentThreadId ? "Property Chat" : "Welcome to PropertyAI"}
           </h2>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-neutral-600">
             {currentThreadId
               ? "Ask about properties, settlements, or market data"
-              : "Start a conversation to explore Australian property data"}
+              : "Start a conversation to explore Australian property insights"}
           </p>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="mx-auto max-w-4xl">
-            {localMessages.length > 0 ? (
-              <>
-                <MessageList messages={localMessages} />
-                {isStreaming && streamId && (
-                  <div className="mt-4">
-                    <StreamingMessage streamId={streamId} isVisible={true} />
+        <div className="flex-1 overflow-hidden">
+          <ScrollArea className="h-full p-6">
+            <div className="space-y-6">
+              {(!currentThreadId || !messages?.page?.length) && (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <div className="relative mb-4">
+                    <Avatar size="2xl" className="ring-primary-100 ring-4">
+                      <AvatarFallback variant="colored" className="bg-primary">
+                        <Bot className="h-8 w-8 text-white" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="bg-success-500 absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full border-4 border-white">
+                      <Sparkles className="h-3 w-3 text-white" />
+                    </div>
                   </div>
-                )}
-              </>
-            ) : (
-              <div className="py-12 text-center">
-                <div className="mx-auto max-w-md">
-                  <h3 className="mb-2 text-lg font-medium text-gray-900">
-                    Property Concierge AI
+                  <h3 className="mb-2 text-xl font-semibold text-neutral-900">
+                    Hello! I'm your AI property assistant
                   </h3>
-                  <p className="mb-6 text-gray-600">
-                    I'm your Australian property assistant with access to real property
-                    data, settlement tracking, and market insights. How can I help you
-                    today?
+                  <p className="max-w-md text-neutral-600">
+                    I can help you navigate Australian property transactions, search
+                    listings, track settlements, and provide market insights. What would
+                    you like to know?
                   </p>
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <button
-                      className="rounded-lg border p-3 text-left hover:bg-gray-50"
-                      onClick={() =>
-                        setInputValue(
-                          "Show me properties in Melbourne CBD under $900,000"
-                        )
-                      }
+                </div>
+              )}
+
+              {/* Message List */}
+              {messages?.page
+                ?.slice()
+                .reverse()
+                .map((message: any) => (
+                  <div
+                    key={message._id}
+                    className={`flex gap-4 ${message.message.role === "user" ? "justify-end" : "justify-start"} animate-fade-in`}
+                  >
+                    {message.message.role === "assistant" && (
+                      <Avatar size="sm" className="ring-primary-100 mt-1 ring-2">
+                        <AvatarFallback variant="colored">
+                          <Bot className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
+                    <div
+                      className={`max-w-[85%] rounded-2xl px-5 py-4 shadow-sm ${
+                        message.message.role === "user"
+                          ? "bg-primary shadow-primary/20 text-white"
+                          : "border border-neutral-200 bg-neutral-50 text-neutral-900"
+                      }`}
                     >
-                      🏢 Search Properties
-                    </button>
-                    <button
-                      className="rounded-lg border p-3 text-left hover:bg-gray-50"
-                      onClick={() =>
-                        setInputValue("Check settlement status for all current deals")
-                      }
-                    >
-                      📋 Settlement Status
-                    </button>
-                    <button
-                      className="rounded-lg border p-3 text-left hover:bg-gray-50"
-                      onClick={() => setInputValue("Get market insights for Bondi Beach")}
-                    >
-                      📊 Market Data
-                    </button>
-                    <button
-                      className="rounded-lg border p-3 text-left hover:bg-gray-50"
-                      onClick={() =>
-                        setInputValue("Analyze documents for settlement settle_001")
-                      }
-                    >
-                      📄 Document Analysis
-                    </button>
+                      <div
+                        className={`text-sm leading-relaxed font-medium ${message.message.role === "user" ? "text-white" : ""}`}
+                      >
+                        <p className="whitespace-pre-wrap">{message.text}</p>
+                      </div>
+                      <p
+                        className={`mt-2 text-xs ${message.message.role === "user" ? "text-primary-100" : "text-neutral-500"}`}
+                      >
+                        {new Date(message._creationTime).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                    </div>
+                    {message.message.role === "user" && (
+                      <Avatar size="sm" className="mt-1 ring-2 ring-neutral-200">
+                        <AvatarFallback variant="neutral">
+                          <User className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
+                  </div>
+                ))}
+
+              {/* Generating Indicator */}
+              {isGenerating && (
+                <div className="animate-fade-in flex justify-start gap-4">
+                  <Avatar size="sm" className="ring-primary-100 mt-1 ring-2">
+                    <AvatarFallback variant="colored">
+                      <Bot className="h-4 w-4" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="max-w-[85%] rounded-2xl border border-neutral-200 bg-neutral-50 px-5 py-4 text-neutral-900 shadow-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="flex space-x-1">
+                        <div className="bg-primary h-2 w-2 animate-bounce rounded-full"></div>
+                        <div
+                          className="bg-primary h-2 w-2 animate-bounce rounded-full"
+                          style={{ animationDelay: "0.1s" }}
+                        ></div>
+                        <div
+                          className="bg-primary h-2 w-2 animate-bounce rounded-full"
+                          style={{ animationDelay: "0.2s" }}
+                        ></div>
+                      </div>
+                      <span className="text-xs text-neutral-500">AI is thinking...</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
+              )}
+            </div>
+          </ScrollArea>
         </div>
 
         {/* Input Area */}
-        <div className="border-t bg-white p-6">
-          <div className="mx-auto max-w-4xl">
-            <div className="flex gap-3">
-              <textarea
-                value={inputValue}
-                onChange={e => setInputValue(e.target.value)}
-                onKeyDown={handleKeyPress}
-                placeholder="Ask about property settlements, searches, market data..."
-                className="flex-1 resize-none rounded-lg border p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                rows={2}
-                disabled={isStreaming}
-              />
-              <button
-                onClick={handleSendMessage}
-                disabled={!inputValue.trim() || isStreaming}
-                className="rounded-lg bg-blue-600 px-6 py-3 text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {isStreaming ? "..." : "Send"}
-              </button>
-            </div>
-            <div className="mt-2 text-xs text-gray-500">
-              Press Enter to send, Shift+Enter for new line
-            </div>
+        <div className="border-t border-neutral-200 bg-neutral-50 p-6">
+          <div className="flex gap-3">
+            <Input
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              placeholder="Ask about property transactions, legal requirements, or market insights..."
+              className="h-12 flex-1 border-neutral-300 bg-white px-4 py-3"
+              onKeyDown={e => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
+              disabled={isGenerating}
+            />
+            <Button
+              onClick={handleSendMessage}
+              variant="rounded"
+              size="xl"
+              disabled={!input.trim() || isGenerating}
+            >
+              <Send className="h-5 w-5" />
+            </Button>
           </div>
+          <p className="mt-3 text-center text-xs text-neutral-500">
+            AI responses are for informational purposes. Always consult with qualified
+            professionals.
+          </p>
         </div>
       </div>
     </div>
