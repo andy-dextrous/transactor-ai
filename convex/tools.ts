@@ -11,9 +11,14 @@ export const toolDefinitions = {
   propertySearch: {
     name: "propertySearch",
     description:
-      "Search for properties based on location, type, price range, and features. Returns real property listings with detailed information.",
+      "Search for properties. Can be used with no parameters to list all available properties, or with any combination of filters. Very flexible - works with just one parameter or many.",
     parameters: z.object({
-      location: z.string().optional().describe("Suburb, city, or postcode to search in"),
+      location: z
+        .string()
+        .optional()
+        .describe(
+          "Suburb, city, or postcode to search in (e.g., 'Melbourne', 'Bondi', 'VIC')"
+        ),
       propertyType: z
         .enum(["house", "apartment", "townhouse", "any"])
         .optional()
@@ -51,6 +56,16 @@ export const toolDefinitions = {
         .optional()
         .describe("Type of document to find"),
       settlementId: z.string().optional().describe("Settlement ID to find documents for"),
+    }),
+  },
+  getPropertyDetails: {
+    name: "getPropertyDetails",
+    description:
+      "Get detailed information about a specific property including full description, inspection times, and auction details",
+    parameters: z.object({
+      address: z
+        .string()
+        .describe("Property address to get details for (can be partial)"),
     }),
   },
   getMarketInsights: {
@@ -97,6 +112,16 @@ export const createPropertyTools = (ctx: ActionCtx) => ({
     parameters: toolDefinitions.analyzeDocument.parameters,
     execute: async (args: z.infer<typeof toolDefinitions.analyzeDocument.parameters>) => {
       const result = await ctx.runQuery(internal.tools.internal.analyzeDocuments, args)
+      return JSON.stringify(result)
+    },
+  },
+  getPropertyDetails: {
+    description: toolDefinitions.getPropertyDetails.description,
+    parameters: toolDefinitions.getPropertyDetails.parameters,
+    execute: async (
+      args: z.infer<typeof toolDefinitions.getPropertyDetails.parameters>
+    ) => {
+      const result = await ctx.runQuery(internal.tools.internal.getPropertyDetails, args)
       return JSON.stringify(result)
     },
   },
@@ -157,6 +182,12 @@ export const toolQueryValidators = {
         )
       ),
       settlementId: v.optional(v.string()),
+    },
+    returns: v.string(),
+  },
+  getPropertyDetails: {
+    args: {
+      address: v.string(),
     },
     returns: v.string(),
   },

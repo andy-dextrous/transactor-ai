@@ -17,6 +17,15 @@ export const searchProperties = internalQuery({
   handler: async (ctx, args) => {
     let results = [...SEED_PROPERTIES]
 
+    // Check if any filters are provided
+    const hasFilters =
+      args.location ||
+      args.propertyType ||
+      args.minPrice ||
+      args.maxPrice ||
+      args.minBedrooms ||
+      (args.features && args.features.length > 0)
+
     // Filter by location (fuzzy match on address)
     if (args.location) {
       results = results.filter(prop =>
@@ -54,28 +63,24 @@ export const searchProperties = internalQuery({
     }
 
     if (results.length === 0) {
-      return "No properties found matching your criteria. Try adjusting your search parameters."
+      return "No properties found matching your criteria. Try adjusting your search parameters or use the tool with no parameters to see all available properties."
     }
 
-    // Format results
+    // Create a more concise format for listings
     const formattedResults = results
       .map(
-        prop => `
-**${prop.address}**
-- Type: ${prop.type} | ${prop.bedrooms} bed, ${prop.bathrooms} bath
-- Price: $${prop.price.toLocaleString()} ${prop.priceGuide ? `(Guide: ${prop.priceGuide})` : ""}
-- Size: ${prop.buildingSize}m² ${prop.landSize ? `on ${prop.landSize}m² land` : ""}
-- Features: ${prop.features.join(", ")}
-- Agent: ${prop.listingAgent}
-- Inspections: ${prop.inspectionTimes.join(", ")}
-${prop.auctionDate ? `- Auction: ${prop.auctionDate}` : ""}
-
-${prop.description}
-`
+        prop => `🏠 **${prop.address}**
+   ${prop.type.charAt(0).toUpperCase() + prop.type.slice(1)} • ${prop.bedrooms}BR/${prop.bathrooms}BA • $${prop.price.toLocaleString()}
+   ${prop.features.slice(0, 3).join(", ")}${prop.features.length > 3 ? "..." : ""}
+   Agent: ${prop.listingAgent.split(" - ")[0]}`
       )
-      .join("\n---\n")
+      .join("\n\n")
 
-    return `Found ${results.length} propert${results.length === 1 ? "y" : "ies"} matching your search:\n\n${formattedResults}`
+    const searchSummary = hasFilters
+      ? `Found ${results.length} propert${results.length === 1 ? "y" : "ies"} matching your search criteria:`
+      : `Here are all ${results.length} available properties:`
+
+    return `${searchSummary}\n\n${formattedResults}\n\n💡 Ask me for more details about any specific property or use filters to narrow down the search.`
   },
 })
 
@@ -169,6 +174,51 @@ ${riskSection}
 - Finance Approval Due: ${settlement.financeApprovalDue}
 - Building Inspection Due: ${settlement.inspectionDue}
     `
+  },
+})
+
+/*************************************************************************/
+/*  PROPERTY DETAILS TOOL
+/*************************************************************************/
+
+export const getPropertyDetails = internalQuery({
+  args: toolQueryValidators.getPropertyDetails.args,
+  returns: toolQueryValidators.getPropertyDetails.returns,
+  handler: async (ctx, args) => {
+    // Find property by address (fuzzy match)
+    const property = SEED_PROPERTIES.find(prop =>
+      prop.address.toLowerCase().includes(args.address.toLowerCase())
+    )
+
+    if (!property) {
+      return `No property found matching "${args.address}". Try searching with a partial address like "Collins Street" or "Bondi Beach".`
+    }
+
+    // Format detailed property information
+    return `🏠 **${property.address}**
+
+**Property Details:**
+• Type: ${property.type.charAt(0).toUpperCase() + property.type.slice(1)}
+• Bedrooms: ${property.bedrooms} | Bathrooms: ${property.bathrooms} | Car Spaces: ${property.carSpaces}
+• Building Size: ${property.buildingSize}m²${property.landSize ? ` | Land Size: ${property.landSize}m²` : ""}
+• Year Built: ${property.yearBuilt}
+
+**Pricing:**
+• Listed Price: $${property.price.toLocaleString()}
+• Price Guide: ${property.priceGuide}
+
+**Features:**
+${property.features.map(feature => `• ${feature}`).join("\n")}
+
+**Inspection & Sale:**
+• Inspection Times: ${property.inspectionTimes.join(", ")}
+${property.auctionDate ? `• Auction Date: ${property.auctionDate}` : "• Sale: Private Treaty"}
+• Listing Agent: ${property.listingAgent}
+
+**Description:**
+${property.description}
+
+💡 I can help you with settlement tracking, market insights for this area, or find similar properties.`
   },
 })
 
