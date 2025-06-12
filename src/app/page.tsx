@@ -8,65 +8,94 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Send, Bot, User, Sparkles, Plus, MessageSquare } from "lucide-react"
 import { api } from "../../convex/_generated/api"
+import { Id } from "../../convex/_generated/dataModel"
 
 export default function ChatPage() {
-  const [currentThreadId, setCurrentThreadId] = useState<string | null>(null)
+  const [currentConversationId, setCurrentConversationId] =
+    useState<Id<"conversations"> | null>(null)
   const [input, setInput] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
 
   // Convex hooks
-  const createThread = useMutation(api.messages.createThread)
-  const generateResponse = useAction(api.messages.generateResponse)
+  const sendMessage = useMutation(api.chat.sendMessage)
+  const startConversation = useMutation(api.chat.startConversation)
+
+  const conversations = useQuery(api.conversations.listConversations, {
+    paginationOpts: { cursor: null, numItems: 10 },
+  })
 
   const messages = useQuery(
-    api.messages.listThreadMessages,
-    currentThreadId
+    api.conversations.listMessages,
+    currentConversationId
       ? {
-          threadId: currentThreadId,
+          conversationId: currentConversationId,
           paginationOpts: { cursor: null, numItems: 50 },
         }
       : "skip"
   )
 
-  const handleSendMessage = async () => {
+  const currentConversation = useQuery(
+    api.conversations.getConversation,
+    currentConversationId ? { conversationId: currentConversationId } : "skip"
+  )
+
+  /*************************************************************************/
+  /*  EVENT HANDLERS
+  /*************************************************************************/
+
+  function handleSendMessage() {
     if (!input.trim()) return
-
-    console.log("Sending message:", input)
-    let threadId = currentThreadId
-
-    // Create thread if this is the first message
-    if (!threadId) {
-      console.log("Creating new thread...")
-      const result = await createThread({})
-      threadId = result.threadId
-      setCurrentThreadId(threadId)
-      console.log("Thread created:", threadId)
-    }
 
     const userInput = input
     setInput("")
     setIsGenerating(true)
 
-    try {
-      // Generate AI response
-      console.log("Generating response for:", userInput)
-      const response = await generateResponse({
-        threadId,
-        prompt: userInput,
-      })
-      console.log("Got response:", response)
-    } catch (error) {
-      console.error("Error generating response:", error)
-    } finally {
-      setIsGenerating(false)
+    async function processMessage() {
+      try {
+        const conversationId = currentConversationId
+
+        if (!conversationId) {
+          // Start new conversation
+          console.log("Starting new conversation...")
+          const result = await startConversation({
+            initialMessage: userInput,
+            title: userInput.slice(0, 50) + (userInput.length > 50 ? "..." : ""),
+          })
+          setCurrentConversationId(result.conversationId)
+          console.log("Conversation started:", result.conversationId)
+        } else {
+          // Send message to existing conversation
+          console.log("Sending message to existing conversation:", userInput)
+          await sendMessage({
+            conversationId,
+            content: userInput,
+          })
+          console.log("Message sent successfully")
+        }
+      } catch (error) {
+        console.error("Error processing message:", error)
+      } finally {
+        setIsGenerating(false)
+      }
     }
+
+    processMessage()
   }
 
-  const handleNewConversation = () => {
-    setCurrentThreadId(null)
+  function handleNewConversation() {
+    setCurrentConversationId(null)
     setInput("")
     setIsGenerating(false)
   }
+
+  function handleSelectConversation(conversationId: Id<"conversations">) {
+    setCurrentConversationId(conversationId)
+    setIsGenerating(false)
+  }
+
+  /*************************************************************************/
+  /*  RENDER
+  /*************************************************************************/
 
   return (
     <div className="flex h-screen bg-neutral-100">
@@ -92,7 +121,7 @@ export default function ChatPage() {
           </div>
         </div>
 
-        {/* Thread List */}
+        {/* Conversation List */}
         <ScrollArea className="flex-1 p-4">
           <div className="space-y-3">
             {/* New Conversation Button */}
@@ -105,18 +134,23 @@ export default function ChatPage() {
               New Conversation
             </Button>
 
-            {/* Current Thread Display */}
-            {currentThreadId && (
-              <Button variant="default" className="h-auto w-full justify-start gap-3 p-3">
+            {/* Conversation List */}
+            {conversations?.page?.map(conversation => (
+              <Button
+                key={conversation._id}
+                onClick={() => handleSelectConversation(conversation._id)}
+                variant={currentConversationId === conversation._id ? "default" : "ghost"}
+                className="h-auto w-full justify-start gap-3 p-3"
+              >
                 <MessageSquare className="h-4 w-4" />
                 <div className="min-w-0 flex-1 text-left">
-                  <div className="truncate font-medium">Current Chat</div>
+                  <div className="truncate font-medium">{conversation.title}</div>
                   <div className="truncate text-xs text-neutral-500">
-                    Thread ID: {currentThreadId.slice(0, 8)}...
+                    {new Date(conversation.lastMessageTime).toLocaleDateString()}
                   </div>
                 </div>
               </Button>
-            )}
+            ))}
 
             {/* Usage Hints */}
             <div className="mt-6 rounded-lg bg-neutral-50 p-4">
@@ -139,10 +173,10 @@ export default function ChatPage() {
         {/* Chat Header */}
         <div className="border-b border-neutral-200 bg-white p-6">
           <h2 className="text-lg font-semibold text-neutral-900">
-            {currentThreadId ? "Property Chat" : "Welcome to PropertyAI"}
+            {currentConversation ? currentConversation.title : "Welcome to PropertyAI"}
           </h2>
           <p className="text-sm text-neutral-600">
-            {currentThreadId
+            {currentConversation
               ? "Ask about properties, settlements, or market data"
               : "Start a conversation to explore Australian property insights"}
           </p>
@@ -152,7 +186,7 @@ export default function ChatPage() {
         <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full p-6">
             <div className="space-y-6">
-              {(!currentThreadId || !messages?.page?.length) && (
+              {(!currentConversationId || !messages?.page?.length) && (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <div className="relative mb-4">
                     <Avatar size="2xl" className="ring-primary-100 ring-4">
@@ -176,51 +210,48 @@ export default function ChatPage() {
               )}
 
               {/* Message List */}
-              {messages?.page
-                ?.slice()
-                .reverse()
-                .map((message: any) => (
+              {messages?.page?.map(message => (
+                <div
+                  key={message._id}
+                  className={`flex gap-4 ${message.role === "user" ? "justify-end" : "justify-start"} animate-fade-in`}
+                >
+                  {message.role === "assistant" && (
+                    <Avatar size="sm" className="ring-primary-100 mt-1 ring-2">
+                      <AvatarFallback variant="colored">
+                        <Bot className="h-4 w-4" />
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
                   <div
-                    key={message._id}
-                    className={`flex gap-4 ${message.message.role === "user" ? "justify-end" : "justify-start"} animate-fade-in`}
+                    className={`max-w-[85%] rounded-2xl px-5 py-4 shadow-sm ${
+                      message.role === "user"
+                        ? "bg-primary shadow-primary/20 text-white"
+                        : "border border-neutral-200 bg-neutral-50 text-neutral-900"
+                    }`}
                   >
-                    {message.message.role === "assistant" && (
-                      <Avatar size="sm" className="ring-primary-100 mt-1 ring-2">
-                        <AvatarFallback variant="colored">
-                          <Bot className="h-4 w-4" />
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
                     <div
-                      className={`max-w-[85%] rounded-2xl px-5 py-4 shadow-sm ${
-                        message.message.role === "user"
-                          ? "bg-primary shadow-primary/20 text-white"
-                          : "border border-neutral-200 bg-neutral-50 text-neutral-900"
-                      }`}
+                      className={`text-sm leading-relaxed font-medium ${message.role === "user" ? "text-white" : ""}`}
                     >
-                      <div
-                        className={`text-sm leading-relaxed font-medium ${message.message.role === "user" ? "text-white" : ""}`}
-                      >
-                        <p className="whitespace-pre-wrap">{message.text}</p>
-                      </div>
-                      <p
-                        className={`mt-2 text-xs ${message.message.role === "user" ? "text-primary-100" : "text-neutral-500"}`}
-                      >
-                        {new Date(message._creationTime).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </p>
+                      <p className="whitespace-pre-wrap">{message.content}</p>
                     </div>
-                    {message.message.role === "user" && (
-                      <Avatar size="sm" className="mt-1 ring-2 ring-neutral-200">
-                        <AvatarFallback variant="neutral">
-                          <User className="h-4 w-4" />
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
+                    <p
+                      className={`mt-2 text-xs ${message.role === "user" ? "text-primary-100" : "text-neutral-500"}`}
+                    >
+                      {new Date(message._creationTime).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
                   </div>
-                ))}
+                  {message.role === "user" && (
+                    <Avatar size="sm" className="mt-1 ring-2 ring-neutral-200">
+                      <AvatarFallback variant="neutral">
+                        <User className="h-4 w-4" />
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
+                </div>
+              ))}
 
               {/* Generating Indicator */}
               {isGenerating && (

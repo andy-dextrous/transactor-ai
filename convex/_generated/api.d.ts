@@ -9,10 +9,17 @@
  */
 
 import type * as agent from "../agent.js";
+import type * as ai_agent from "../ai/agent.js";
+import type * as chat from "../chat.js";
+import type * as chatActions from "../chatActions.js";
+import type * as conversations from "../conversations.js";
 import type * as http from "../http.js";
 import type * as messages from "../messages.js";
+import type * as seed from "../seed.js";
 import type * as seedData from "../seedData.js";
 import type * as streaming from "../streaming.js";
+import type * as tools_internal from "../tools/internal.js";
+import type * as tools from "../tools.js";
 
 import type {
   ApiFromModules,
@@ -30,10 +37,17 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   agent: typeof agent;
+  "ai/agent": typeof ai_agent;
+  chat: typeof chat;
+  chatActions: typeof chatActions;
+  conversations: typeof conversations;
   http: typeof http;
   messages: typeof messages;
+  seed: typeof seed;
   seedData: typeof seedData;
   streaming: typeof streaming;
+  "tools/internal": typeof tools_internal;
+  tools: typeof tools;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

@@ -29,6 +29,7 @@ export const listThreadMessages = query({
   },
   handler: async (ctx, { threadId, paginationOpts }) => {
     console.log("Listing messages for thread:", threadId)
+    // Use the agent's listMessages method
     const result = await chatAgent.listMessages(ctx, {
       threadId,
       paginationOpts,

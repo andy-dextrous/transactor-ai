@@ -8,7 +8,7 @@ export const SEED_PROPERTIES = [
     bathrooms: 2,
     carSpaces: 1,
     price: 850000,
-    landSize: null,
+    landSize: undefined,
     buildingSize: 95,
     yearBuilt: 2018,
     features: ["City views", "Gym", "Concierge", "Rooftop terrace"],
@@ -56,7 +56,7 @@ export const SEED_PROPERTIES = [
     images: ["https://via.placeholder.com/400x300?text=South+Yarra+Townhouse"],
     listingAgent: "Emma Wilson - Marshall White",
     inspectionTimes: ["Sat 1:00-1:30 PM", "Tue 6:00-6:30 PM"],
-    auctionDate: null,
+    auctionDate: undefined,
     priceGuide: "$1.3M - $1.4M",
   },
   {
@@ -80,7 +80,7 @@ export const SEED_PROPERTIES = [
     images: ["https://via.placeholder.com/400x300?text=Newcastle+House"],
     listingAgent: "David Kim - First National Newcastle",
     inspectionTimes: ["Sat 10:00-10:30 AM", "Wed 5:00-5:30 PM"],
-    auctionDate: null,
+    auctionDate: undefined,
     priceGuide: "$720,000 - $780,000",
   },
 ]
@@ -97,7 +97,7 @@ export const SEED_SETTLEMENTS = [
     settlementDate: "2025-02-14",
     financeApprovalDue: "2025-01-15",
     inspectionDue: "2025-01-08",
-    status: "on_track",
+    status: "on_track" as const,
     daysToSettlement: 28,
     milestones: [
       { name: "Contract Signed", date: "2024-12-15", status: "completed" },
@@ -121,7 +121,7 @@ export const SEED_SETTLEMENTS = [
     settlementDate: "2025-01-25",
     financeApprovalDue: "2024-12-20",
     inspectionDue: "2024-12-01",
-    status: "at_risk",
+    status: "at_risk" as const,
     daysToSettlement: 9,
     milestones: [
       { name: "Contract Signed", date: "2024-11-20", status: "completed" },
@@ -148,7 +148,7 @@ export const SEED_SETTLEMENTS = [
     settlementDate: "2025-01-30",
     financeApprovalDue: "2024-11-30",
     inspectionDue: "2024-11-15",
-    status: "completed",
+    status: "completed" as const,
     daysToSettlement: 0,
     milestones: [
       { name: "Contract Signed", date: "2024-10-30", status: "completed" },
@@ -167,7 +167,7 @@ export const SEED_DOCUMENTS = [
   {
     id: "doc_001",
     settlementId: "settle_001",
-    type: "contract",
+    type: "contract" as const,
     title: "Contract of Sale - 123 Collins Street",
     description:
       "Standard Victorian contract of sale with special conditions for apartment purchase",
@@ -178,13 +178,13 @@ export const SEED_DOCUMENTS = [
       "Vendor to provide Section 32 statement",
     ],
     riskFlags: [],
-    complianceStatus: "compliant",
+    complianceStatus: "compliant" as const,
     uploadDate: "2024-12-15",
   },
   {
     id: "doc_002",
     settlementId: "settle_002",
-    type: "building_report",
+    type: "building_report" as const,
     title: "Building & Pest Inspection - 45 Ocean Drive",
     description: "Comprehensive building and pest inspection report",
     keyPoints: [
@@ -194,13 +194,13 @@ export const SEED_DOCUMENTS = [
       "Plumbing updated recently",
     ],
     riskFlags: ["Termite treatment recommended within 6 months"],
-    complianceStatus: "requires_review",
+    complianceStatus: "requires_review" as const,
     uploadDate: "2024-12-01",
   },
   {
     id: "doc_003",
     settlementId: "settle_001",
-    type: "finance_approval",
+    type: "finance_approval" as const,
     title: "Loan Pre-Approval - Commonwealth Bank",
     description: "Conditional loan approval subject to valuation",
     keyPoints: [
@@ -210,7 +210,7 @@ export const SEED_DOCUMENTS = [
       "Subject to satisfactory valuation",
     ],
     riskFlags: [],
-    complianceStatus: "compliant",
+    complianceStatus: "compliant" as const,
     uploadDate: "2025-01-10",
   },
 ]
