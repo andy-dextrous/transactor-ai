@@ -1,0 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Always remember that you have the Mastra MCP server available for understanding exactly how to implement any changes in the agentic, streaming, workflow, eval (Mastra) side of things. 
+
+This app has a complete design system built into src/components. There is also a fully comprehensive shadcn library in src/components/ui that is already styled. Use these wherever you can to maintain brand consistency.

@@ -8,44 +8,94 @@ import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Send, Bot, User, Sparkles } from "lucide-react"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+import { Send, Bot, User, Sparkles, ChevronDown, ChevronRight } from "lucide-react"
 import { streamChatResponse, type ChatMessage } from "@/app/mastra-test/chat-action"
+
+/*************************************************************************/
+/*  THINKING INDICATOR COMPONENT
+/*************************************************************************/
+
+function ThinkingIndicator() {
+  return (
+    <div className="animate-fade-in flex justify-start gap-4">
+      <Avatar size="sm" className="ring-primary-100 mt-1 ring-2">
+        <AvatarFallback variant="colored">
+          <Bot className="h-4 w-4" />
+        </AvatarFallback>
+      </Avatar>
+      <div className="max-w-[85%]">
+        <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-5 py-4 text-neutral-900 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="flex space-x-1">
+              <div className="h-2 w-2 animate-bounce rounded-full bg-neutral-400 [animation-delay:-0.3s]"></div>
+              <div className="h-2 w-2 animate-bounce rounded-full bg-neutral-400 [animation-delay:-0.15s]"></div>
+              <div className="h-2 w-2 animate-bounce rounded-full bg-neutral-400"></div>
+            </div>
+            <span className="text-sm font-medium text-neutral-600">Thinking...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 /*************************************************************************/
 /*  TOOL CALL DISPLAY COMPONENT
 /*************************************************************************/
 
 function ToolCallDisplay({ toolCall }: { toolCall: any }) {
+  const [isOpen, setIsOpen] = useState(false)
+
   return (
-    <div className="mt-3 rounded-lg border border-neutral-200 bg-neutral-50 p-3">
-      <div className="mb-2 flex items-center gap-2">
-        <Sparkles className="text-primary h-4 w-4" />
-        <span className="text-sm font-medium text-neutral-700">
-          Using tool: {toolCall.name}
-        </span>
-        {toolCall.result && <Sparkles className="text-success h-4 w-4" />}
-      </div>
-
-      {toolCall.args && (
-        <div className="mb-2">
-          <p className="mb-1 text-xs text-neutral-500">Input:</p>
-          <div className="rounded bg-neutral-100 p-2 font-mono text-xs">
-            {JSON.stringify(toolCall.args, null, 2)}
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger asChild>
+        <div className="mt-3 cursor-pointer rounded-lg border border-neutral-200 bg-neutral-50 p-3 transition-colors hover:bg-neutral-100">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles className="text-primary h-4 w-4" />
+              <span className="text-sm font-medium text-neutral-700">
+                Using tool: {toolCall.name}
+              </span>
+              {toolCall.result && <Sparkles className="text-success h-4 w-4" />}
+            </div>
+            {isOpen ? (
+              <ChevronDown className="h-4 w-4 text-neutral-500" />
+            ) : (
+              <ChevronRight className="h-4 w-4 text-neutral-500" />
+            )}
           </div>
         </div>
-      )}
+      </CollapsibleTrigger>
 
-      {toolCall.result && (
-        <div>
-          <p className="mb-1 text-xs text-neutral-500">Result:</p>
-          <div className="bg-success-50 border-success-200 rounded border p-2 text-xs">
-            {typeof toolCall.result === "object"
-              ? JSON.stringify(toolCall.result, null, 2)
-              : String(toolCall.result)}
-          </div>
+      <CollapsibleContent>
+        <div className="mt-2 rounded-lg border border-neutral-200 bg-neutral-50 p-3">
+          {toolCall.args && (
+            <div className="mb-2">
+              <p className="mb-1 text-xs text-neutral-500">Input:</p>
+              <div className="rounded bg-neutral-100 p-2 font-mono text-xs">
+                {JSON.stringify(toolCall.args, null, 2)}
+              </div>
+            </div>
+          )}
+
+          {toolCall.result && (
+            <div>
+              <p className="mb-1 text-xs text-neutral-500">Result:</p>
+              <div className="bg-success-50 border-success-200 rounded border p-2 text-xs">
+                {typeof toolCall.result === "object"
+                  ? JSON.stringify(toolCall.result, null, 2)
+                  : String(toolCall.result)}
+              </div>
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      </CollapsibleContent>
+    </Collapsible>
   )
 }
 
@@ -65,6 +115,7 @@ export function MastraChatUI() {
   ])
   const [input, setInput] = useState("")
   const [isStreaming, setIsStreaming] = useState(false)
+  const [isThinking, setIsThinking] = useState(false)
   const [streamingContent, setStreamingContent] = useState("")
   const [streamingToolCalls, setStreamingToolCalls] = useState<any[]>([])
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -79,7 +130,7 @@ export function MastraChatUI() {
 
   useEffect(() => {
     scrollToBottom()
-  }, [messages, streamingContent])
+  }, [messages, streamingContent, streamingToolCalls, isThinking])
 
   const sendMessage = async () => {
     if (!input.trim() || isStreaming) return
@@ -95,6 +146,7 @@ export function MastraChatUI() {
     setMessages(updatedMessages)
     setInput("")
     setIsStreaming(true)
+    setIsThinking(true)
     setStreamingContent("")
     setStreamingToolCalls([])
 
@@ -120,16 +172,25 @@ export function MastraChatUI() {
 
           switch (parsed.type) {
             case "text_chunk":
+              // Hide thinking indicator when first content arrives
+              if (isThinking) {
+                setIsThinking(false)
+              }
               accumulatedContent += parsed.content
               setStreamingContent(accumulatedContent)
               break
 
             case "tool_calls":
+              // Hide thinking indicator when first tool call arrives
+              if (isThinking) {
+                setIsThinking(false)
+              }
               accumulatedToolCalls = [...accumulatedToolCalls, ...parsed.toolCalls]
               setStreamingToolCalls(accumulatedToolCalls)
               break
 
             case "error":
+              setIsThinking(false)
               const errorMessage: ChatMessage = {
                 id: (Date.now() + 1).toString(),
                 content: parsed.content,
@@ -140,6 +201,7 @@ export function MastraChatUI() {
               break
 
             case "done":
+              setIsThinking(false)
               // Finalize the streaming message
               if (accumulatedContent || accumulatedToolCalls.length > 0) {
                 const finalMessage: ChatMessage = {
@@ -160,6 +222,7 @@ export function MastraChatUI() {
         }
       }
     } catch (error) {
+      setIsThinking(false)
       // Add error message
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
@@ -170,6 +233,9 @@ export function MastraChatUI() {
       setMessages(prev => [...prev, errorMessage])
     } finally {
       setIsStreaming(false)
+      setIsThinking(false)
+      setStreamingContent("")
+      setStreamingToolCalls([])
     }
   }
 
@@ -211,71 +277,80 @@ export function MastraChatUI() {
                     </AvatarFallback>
                   </Avatar>
                 )}
-                <div
-                  className={`max-w-[85%] rounded-2xl px-5 py-4 shadow-sm ${
-                    message.sender === "user"
-                      ? "bg-primary shadow-primary/20 text-white [&_*]:text-white"
-                      : "border border-neutral-200 bg-neutral-50 text-neutral-900"
-                  }`}
-                >
-                  <div
-                    className={`text-sm leading-relaxed font-medium ${message.sender === "user" ? "text-white" : ""}`}
-                  >
-                    {message.sender === "user" ? (
-                      <p>{message.content}</p>
-                    ) : (
-                      <div className="prose prose-sm prose-neutral max-w-none">
-                        <ReactMarkdown
-                          components={{
-                            p: ({ children }) => (
-                              <p className="mb-2 last:mb-0">{children}</p>
-                            ),
-                            ul: ({ children }) => (
-                              <ul className="mb-2 pl-4 last:mb-0">{children}</ul>
-                            ),
-                            ol: ({ children }) => (
-                              <ol className="mb-2 pl-4 last:mb-0">{children}</ol>
-                            ),
-                            li: ({ children }) => <li className="mb-1">{children}</li>,
-                            strong: ({ children }) => (
-                              <strong className="font-semibold">{children}</strong>
-                            ),
-                            em: ({ children }) => <em className="italic">{children}</em>,
-                            code: ({ children }) => (
-                              <code className="rounded bg-neutral-200 px-1 py-0.5 font-mono text-xs">
-                                {children}
-                              </code>
-                            ),
-                            pre: ({ children }) => (
-                              <pre className="my-2 overflow-x-auto rounded-lg bg-neutral-100 p-3">
-                                {children}
-                              </pre>
-                            ),
-                          }}
-                        >
-                          {message.content}
-                        </ReactMarkdown>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Tool calls display */}
+                <div className="max-w-[85%] space-y-3">
+                  {/* Tool calls display - shown first */}
                   {message.toolCalls && message.toolCalls.length > 0 && (
-                    <div className="mt-3 space-y-2">
+                    <div className="space-y-2">
                       {message.toolCalls.map(toolCall => (
                         <ToolCallDisplay key={toolCall.id} toolCall={toolCall} />
                       ))}
                     </div>
                   )}
 
-                  <p
-                    className={`mt-2 text-xs ${message.sender === "user" ? "text-primary-100" : "text-neutral-500"}`}
-                  >
-                    {message.timestamp.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </p>
+                  {/* Text content */}
+                  {message.content && (
+                    <div
+                      className={`rounded-2xl px-5 py-4 shadow-sm ${
+                        message.sender === "user"
+                          ? "bg-primary shadow-primary/20 text-white [&_*]:text-white"
+                          : "border border-neutral-200 bg-neutral-50 text-neutral-900"
+                      }`}
+                    >
+                      <div
+                        className={`text-sm leading-relaxed font-medium ${message.sender === "user" ? "text-white" : ""}`}
+                      >
+                        {message.sender === "user" ? (
+                          <p>{message.content}</p>
+                        ) : (
+                          <div className="prose prose-sm prose-neutral max-w-none">
+                            <ReactMarkdown
+                              components={{
+                                p: ({ children }) => (
+                                  <p className="mb-2 last:mb-0">{children}</p>
+                                ),
+                                ul: ({ children }) => (
+                                  <ul className="mb-2 pl-4 last:mb-0">{children}</ul>
+                                ),
+                                ol: ({ children }) => (
+                                  <ol className="mb-2 pl-4 last:mb-0">{children}</ol>
+                                ),
+                                li: ({ children }) => (
+                                  <li className="mb-1">{children}</li>
+                                ),
+                                strong: ({ children }) => (
+                                  <strong className="font-semibold">{children}</strong>
+                                ),
+                                em: ({ children }) => (
+                                  <em className="italic">{children}</em>
+                                ),
+                                code: ({ children }) => (
+                                  <code className="rounded bg-neutral-200 px-1 py-0.5 font-mono text-xs">
+                                    {children}
+                                  </code>
+                                ),
+                                pre: ({ children }) => (
+                                  <pre className="my-2 overflow-x-auto rounded-lg bg-neutral-100 p-3">
+                                    {children}
+                                  </pre>
+                                ),
+                              }}
+                            >
+                              {message.content}
+                            </ReactMarkdown>
+                          </div>
+                        )}
+                      </div>
+
+                      <p
+                        className={`mt-2 text-xs ${message.sender === "user" ? "text-primary-100" : "text-neutral-500"}`}
+                      >
+                        {message.timestamp.toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                    </div>
+                  )}
                 </div>
                 {message.sender === "user" && (
                   <Avatar size="sm" className="mt-1 ring-2 ring-neutral-200">
@@ -287,7 +362,12 @@ export function MastraChatUI() {
               </div>
             ))}
 
-            {/* Streaming message */}
+            {/* Thinking indicator - only show when thinking and no content yet */}
+            {isThinking && streamingContent === "" && streamingToolCalls.length === 0 && (
+              <ThinkingIndicator />
+            )}
+
+            {/* Streaming message - show when we have content OR when not thinking */}
             {isStreaming && (streamingContent || streamingToolCalls.length > 0) && (
               <div className="animate-fade-in flex justify-start gap-4">
                 <Avatar size="sm" className="ring-primary-100 mt-1 ring-2">
@@ -295,60 +375,65 @@ export function MastraChatUI() {
                     <Bot className="h-4 w-4" />
                   </AvatarFallback>
                 </Avatar>
-                <div className="max-w-[85%] rounded-2xl border border-neutral-200 bg-neutral-50 px-5 py-4 text-neutral-900 shadow-sm">
-                  {streamingContent && (
-                    <div className="text-sm leading-relaxed font-medium">
-                      <div className="prose prose-sm prose-neutral max-w-none">
-                        <ReactMarkdown
-                          components={{
-                            p: ({ children }) => (
-                              <p className="mb-2 last:mb-0">{children}</p>
-                            ),
-                            ul: ({ children }) => (
-                              <ul className="mb-2 pl-4 last:mb-0">{children}</ul>
-                            ),
-                            ol: ({ children }) => (
-                              <ol className="mb-2 pl-4 last:mb-0">{children}</ol>
-                            ),
-                            li: ({ children }) => <li className="mb-1">{children}</li>,
-                            strong: ({ children }) => (
-                              <strong className="font-semibold">{children}</strong>
-                            ),
-                            em: ({ children }) => <em className="italic">{children}</em>,
-                            code: ({ children }) => (
-                              <code className="rounded bg-neutral-200 px-1 py-0.5 font-mono text-xs">
-                                {children}
-                              </code>
-                            ),
-                            pre: ({ children }) => (
-                              <pre className="my-2 overflow-x-auto rounded-lg bg-neutral-100 p-3">
-                                {children}
-                              </pre>
-                            ),
-                          }}
-                        >
-                          {streamingContent}
-                        </ReactMarkdown>
-                      </div>
-                      <span className="animate-pulse">|</span>
-                    </div>
-                  )}
-
-                  {/* Streaming tool calls */}
+                <div className="max-w-[85%] space-y-3">
+                  {/* Streaming tool calls - shown first */}
                   {streamingToolCalls.length > 0 && (
-                    <div className="mt-3 space-y-2">
+                    <div className="space-y-2">
                       {streamingToolCalls.map(toolCall => (
                         <ToolCallDisplay key={toolCall.id} toolCall={toolCall} />
                       ))}
                     </div>
                   )}
 
-                  <p className="mt-2 text-xs text-neutral-500">
-                    {new Date().toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </p>
+                  {/* Streaming text content */}
+                  {streamingContent && (
+                    <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-5 py-4 text-neutral-900 shadow-sm">
+                      <div className="text-sm leading-relaxed font-medium">
+                        <div className="prose prose-sm prose-neutral max-w-none">
+                          <ReactMarkdown
+                            components={{
+                              p: ({ children }) => (
+                                <p className="mb-2 last:mb-0">{children}</p>
+                              ),
+                              ul: ({ children }) => (
+                                <ul className="mb-2 pl-4 last:mb-0">{children}</ul>
+                              ),
+                              ol: ({ children }) => (
+                                <ol className="mb-2 pl-4 last:mb-0">{children}</ol>
+                              ),
+                              li: ({ children }) => <li className="mb-1">{children}</li>,
+                              strong: ({ children }) => (
+                                <strong className="font-semibold">{children}</strong>
+                              ),
+                              em: ({ children }) => (
+                                <em className="italic">{children}</em>
+                              ),
+                              code: ({ children }) => (
+                                <code className="rounded bg-neutral-200 px-1 py-0.5 font-mono text-xs">
+                                  {children}
+                                </code>
+                              ),
+                              pre: ({ children }) => (
+                                <pre className="my-2 overflow-x-auto rounded-lg bg-neutral-100 p-3">
+                                  {children}
+                                </pre>
+                              ),
+                            }}
+                          >
+                            {streamingContent}
+                          </ReactMarkdown>
+                        </div>
+                        <span className="animate-pulse">|</span>
+                      </div>
+
+                      <p className="mt-2 text-xs text-neutral-500">
+                        {new Date().toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

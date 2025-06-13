@@ -39,6 +39,25 @@ export async function streamChatResponse(
         resourceId,
         threadId,
         maxSteps: 5,
+        onStepFinish: ({ toolCalls, toolResults }) => {
+          // Handle tool calls when a step finishes
+          if (toolCalls && toolCalls.length > 0) {
+            const formattedToolCalls = toolCalls.map((toolCall, index) => ({
+              id: `tool-${Date.now()}-${index}`,
+              name: toolCall.toolName,
+              args: toolCall.args,
+              result: toolResults?.[index]?.result || null,
+            }))
+
+            // Stream tool calls
+            stream.update(
+              JSON.stringify({
+                type: "tool_calls",
+                toolCalls: formattedToolCalls,
+              }) + "\n"
+            )
+          }
+        },
       })
 
       // Stream the text response chunk by chunk
