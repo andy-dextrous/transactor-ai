@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "npm-run-all --parallel dev:next dev:mastra",
     "dev:next": "next dev --turbopack",
-    "dev:mastra": "mastra dev --dir mastra",
+    "dev:mastra": "mastra dev --dir ./src/mastra",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -54,6 +54,7 @@
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
+    "framer-motion": "^12.17.3",
     "gsap": "latest",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.469.0",

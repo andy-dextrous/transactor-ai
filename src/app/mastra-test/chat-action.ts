@@ -1,7 +1,7 @@
 "use server"
 
 import { createStreamableValue } from "ai/rsc"
-import { mastra } from "../../../mastra"
+import { mastra } from "@/mastra"
 
 export interface ChatMessage {
   id: string

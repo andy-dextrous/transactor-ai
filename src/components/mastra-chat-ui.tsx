@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { readStreamableValue } from "ai/rsc"
 import ReactMarkdown from "react-markdown"
+import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -13,7 +14,15 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
-import { Send, Bot, User, Sparkles, ChevronDown, ChevronRight } from "lucide-react"
+import {
+  Send,
+  Bot,
+  User,
+  Sparkles,
+  ChevronDown,
+  ChevronRight,
+  RotateCcw,
+} from "lucide-react"
 import { streamChatResponse, type ChatMessage } from "@/app/mastra-test/chat-action"
 
 /*************************************************************************/
@@ -22,7 +31,13 @@ import { streamChatResponse, type ChatMessage } from "@/app/mastra-test/chat-act
 
 function ThinkingIndicator() {
   return (
-    <div className="animate-fade-in flex justify-start gap-4">
+    <motion.div
+      className="flex justify-start gap-4"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -12 }}
+      transition={{ duration: 0.4 }}
+    >
       <Avatar size="sm" className="ring-primary-100 mt-1 ring-2">
         <AvatarFallback variant="colored">
           <Bot className="h-4 w-4" />
@@ -32,15 +47,39 @@ function ThinkingIndicator() {
         <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-5 py-4 text-neutral-900 shadow-sm">
           <div className="flex items-center gap-3">
             <div className="flex space-x-1">
-              <div className="h-2 w-2 animate-bounce rounded-full bg-neutral-400 [animation-delay:-0.3s]"></div>
-              <div className="h-2 w-2 animate-bounce rounded-full bg-neutral-400 [animation-delay:-0.15s]"></div>
-              <div className="h-2 w-2 animate-bounce rounded-full bg-neutral-400"></div>
+              <motion.div
+                className="h-2 w-2 rounded-full bg-neutral-400"
+                animate={{ y: [0, -4, 0] }}
+                transition={{
+                  duration: 0.6,
+                  repeat: Infinity,
+                  delay: 0,
+                }}
+              />
+              <motion.div
+                className="h-2 w-2 rounded-full bg-neutral-400"
+                animate={{ y: [0, -4, 0] }}
+                transition={{
+                  duration: 0.6,
+                  repeat: Infinity,
+                  delay: 0.2,
+                }}
+              />
+              <motion.div
+                className="h-2 w-2 rounded-full bg-neutral-400"
+                animate={{ y: [0, -4, 0] }}
+                transition={{
+                  duration: 0.6,
+                  repeat: Infinity,
+                  delay: 0.4,
+                }}
+              />
             </div>
             <span className="text-sm font-medium text-neutral-600">Thinking...</span>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -52,50 +91,63 @@ function ToolCallDisplay({ toolCall }: { toolCall: any }) {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <CollapsibleTrigger asChild>
-        <div className="mt-3 cursor-pointer rounded-lg border border-neutral-200 bg-neutral-50 p-3 transition-colors hover:bg-neutral-100">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Sparkles className="text-primary h-4 w-4" />
-              <span className="text-sm font-medium text-neutral-700">
-                Using tool: {toolCall.name}
-              </span>
-              {toolCall.result && <Sparkles className="text-success h-4 w-4" />}
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+    >
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <CollapsibleTrigger asChild>
+          <div className="mt-3 cursor-pointer rounded-lg border border-neutral-200 bg-neutral-50 p-3 transition-colors hover:bg-neutral-100">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Sparkles className="text-primary h-4 w-4" />
+                <span className="text-sm font-medium text-neutral-700">
+                  Using tool: {toolCall.name}
+                </span>
+                {toolCall.result && <Sparkles className="text-success h-4 w-4" />}
+              </div>
+              <motion.div
+                animate={{ rotate: isOpen ? 90 : 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <ChevronRight className="h-4 w-4 text-neutral-500" />
+              </motion.div>
             </div>
-            {isOpen ? (
-              <ChevronDown className="h-4 w-4 text-neutral-500" />
-            ) : (
-              <ChevronRight className="h-4 w-4 text-neutral-500" />
-            )}
           </div>
-        </div>
-      </CollapsibleTrigger>
+        </CollapsibleTrigger>
 
-      <CollapsibleContent>
-        <div className="mt-2 rounded-lg border border-neutral-200 bg-neutral-50 p-3">
-          {toolCall.args && (
-            <div className="mb-2">
-              <p className="mb-1 text-xs text-neutral-500">Input:</p>
-              <div className="rounded bg-neutral-100 p-2 font-mono text-xs">
-                {JSON.stringify(toolCall.args, null, 2)}
+        <CollapsibleContent>
+          <motion.div
+            className="mt-2 rounded-lg border border-neutral-200 bg-neutral-50 p-3"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            {toolCall.args && (
+              <div className="mb-2">
+                <p className="mb-1 text-xs text-neutral-500">Input:</p>
+                <div className="rounded bg-neutral-100 p-2 font-mono text-xs">
+                  {JSON.stringify(toolCall.args, null, 2)}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {toolCall.result && (
-            <div>
-              <p className="mb-1 text-xs text-neutral-500">Result:</p>
-              <div className="bg-success-50 border-success-200 rounded border p-2 text-xs">
-                {typeof toolCall.result === "object"
-                  ? JSON.stringify(toolCall.result, null, 2)
-                  : String(toolCall.result)}
+            {toolCall.result && (
+              <div>
+                <p className="mb-1 text-xs text-neutral-500">Result:</p>
+                <div className="bg-success-50 border-success-200 rounded border p-2 text-xs">
+                  {typeof toolCall.result === "object"
+                    ? JSON.stringify(toolCall.result, null, 2)
+                    : String(toolCall.result)}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-      </CollapsibleContent>
-    </Collapsible>
+            )}
+          </motion.div>
+        </CollapsibleContent>
+      </Collapsible>
+    </motion.div>
   )
 }
 
@@ -120,9 +172,57 @@ export function MastraChatUI() {
   const [streamingToolCalls, setStreamingToolCalls] = useState<any[]>([])
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // Generate unique IDs for user sessions
-  const [resourceId] = useState(() => `user_${Date.now()}`)
-  const [threadId] = useState(() => `thread_${Date.now()}`)
+  // Generate persistent IDs for user sessions that survive page refreshes
+  const [resourceId, setResourceId] = useState("")
+  const [threadId, setThreadId] = useState("")
+
+  // Initialize IDs on client side only
+  useEffect(() => {
+    // Set resourceId
+    const storedUserId = localStorage.getItem("mastra-user-id")
+    if (storedUserId) {
+      setResourceId(storedUserId)
+    } else {
+      const newUserId = `user_${Date.now()}`
+      localStorage.setItem("mastra-user-id", newUserId)
+      setResourceId(newUserId)
+    }
+
+    // Set threadId
+    const storedThreadId = localStorage.getItem("mastra-thread-id")
+    if (storedThreadId) {
+      setThreadId(storedThreadId)
+    } else {
+      const newThreadId = `thread_${Date.now()}`
+      localStorage.setItem("mastra-thread-id", newThreadId)
+      setThreadId(newThreadId)
+    }
+
+    // Load chat history for current thread
+    const historyKey = `mastra-chat-history-${storedThreadId || `thread_${Date.now()}`}`
+    const storedHistory = localStorage.getItem(historyKey)
+    if (storedHistory) {
+      try {
+        const parsedHistory = JSON.parse(storedHistory)
+        // Convert timestamp strings back to Date objects
+        const messagesWithDates = parsedHistory.map((msg: any) => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp),
+        }))
+        setMessages(messagesWithDates)
+      } catch (error) {
+        console.error("Failed to parse chat history:", error)
+      }
+    }
+  }, [])
+
+  // Save messages to localStorage whenever messages change
+  useEffect(() => {
+    if (threadId && messages.length > 0) {
+      const historyKey = `mastra-chat-history-${threadId}`
+      localStorage.setItem(historyKey, JSON.stringify(messages))
+    }
+  }, [messages, threadId])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -132,8 +232,30 @@ export function MastraChatUI() {
     scrollToBottom()
   }, [messages, streamingContent, streamingToolCalls, isThinking])
 
+  const startNewConversation = () => {
+    const newThreadId = `thread_${Date.now()}`
+    setThreadId(newThreadId)
+    localStorage.setItem("mastra-thread-id", newThreadId)
+
+    // Clear old chat history and start fresh
+    const newMessages = [
+      {
+        id: "1",
+        content:
+          "Hello! I'm your AI assistant powered by Mastra. I can help you with various tasks including checking the weather. What would you like to know?",
+        sender: "ai" as const,
+        timestamp: new Date(),
+      },
+    ]
+    setMessages(newMessages)
+
+    // Save the new initial message to localStorage
+    const historyKey = `mastra-chat-history-${newThreadId}`
+    localStorage.setItem(historyKey, JSON.stringify(newMessages))
+  }
+
   const sendMessage = async () => {
-    if (!input.trim() || isStreaming) return
+    if (!input.trim() || isStreaming || !resourceId || !threadId) return
 
     const newMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -259,6 +381,16 @@ export function MastraChatUI() {
             Powered by Transactor • {isStreaming ? "Thinking..." : "Online now"}
           </p>
         </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={startNewConversation}
+          disabled={isStreaming}
+          className="text-white hover:bg-white/10"
+        >
+          <RotateCcw className="mr-2 h-4 w-4" />
+          New Chat
+        </Button>
       </div>
 
       {/* Messages */}
@@ -266,9 +398,12 @@ export function MastraChatUI() {
         <ScrollArea className="h-full">
           <div className="space-y-6 p-6">
             {messages.map(message => (
-              <div
+              <motion.div
                 key={message.id}
-                className={`flex gap-4 ${message.sender === "user" ? "justify-end" : "justify-start"} animate-fade-in`}
+                className={`flex gap-4 ${message.sender === "user" ? "justify-end" : "justify-start"}`}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
               >
                 {message.sender === "ai" && (
                   <Avatar size="sm" className="ring-primary-100 mt-1 ring-2">
@@ -359,7 +494,7 @@ export function MastraChatUI() {
                     </AvatarFallback>
                   </Avatar>
                 )}
-              </div>
+              </motion.div>
             ))}
 
             {/* Thinking indicator - only show when thinking and no content yet */}
@@ -369,7 +504,12 @@ export function MastraChatUI() {
 
             {/* Streaming message - show when we have content OR when not thinking */}
             {isStreaming && (streamingContent || streamingToolCalls.length > 0) && (
-              <div className="animate-fade-in flex justify-start gap-4">
+              <motion.div
+                className="flex justify-start gap-4"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+              >
                 <Avatar size="sm" className="ring-primary-100 mt-1 ring-2">
                   <AvatarFallback variant="colored">
                     <Bot className="h-4 w-4" />
@@ -385,7 +525,7 @@ export function MastraChatUI() {
                     </div>
                   )}
 
-                  {/* Streaming text content */}
+                  {/* Streaming text content - regular streaming without chunk animation */}
                   {streamingContent && (
                     <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-5 py-4 text-neutral-900 shadow-sm">
                       <div className="text-sm leading-relaxed font-medium">
@@ -435,7 +575,7 @@ export function MastraChatUI() {
                     </div>
                   )}
                 </div>
-              </div>
+              </motion.div>
             )}
 
             <div ref={messagesEndRef} />
