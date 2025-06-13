@@ -188,9 +188,9 @@ export function MastraChatUI() {
           </div>
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-white">Mastra AI Assistant</h3>
+          <h3 className="text-lg font-semibold text-white">Transactor AI Concierge</h3>
           <p className="text-sm font-medium text-white/90">
-            Powered by Mastra • {isStreaming ? "Thinking..." : "Online now"}
+            Powered by Transactor • {isStreaming ? "Thinking..." : "Online now"}
           </p>
         </div>
       </div>
@@ -214,7 +214,7 @@ export function MastraChatUI() {
                 <div
                   className={`max-w-[85%] rounded-2xl px-5 py-4 shadow-sm ${
                     message.sender === "user"
-                      ? "bg-primary shadow-primary/20 text-white"
+                      ? "bg-primary shadow-primary/20 text-white [&_*]:text-white"
                       : "border border-neutral-200 bg-neutral-50 text-neutral-900"
                   }`}
                 >
