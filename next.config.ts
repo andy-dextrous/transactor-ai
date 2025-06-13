@@ -32,6 +32,7 @@ const nextConfig = {
     ],
   },
   reactStrictMode: true,
+  serverExternalPackages: ["@mastra/*"],
 } as NextConfig
 
 export default nextConfig

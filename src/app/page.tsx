@@ -2,10 +2,13 @@
 /*  HOMEPAGE
 /*************************************************************************/
 
-export default function TestComponentsPage() {
+import Link from "next/link"
+
+export default function HomePage() {
   return (
-    <div>
-      <p>Hi</p>
-    </div>
+    <main>
+      <h1>Welcome to Transactor</h1>
+      <Link href="/mastra-test">Mastra Test</Link>
+    </main>
   )
 }
