@@ -26,7 +26,7 @@ export async function streamChatResponse(
   // Start the streaming in an async function to ensure proper handling
   ;(async () => {
     try {
-      // 🎯 NOW USING THE ORCHESTRATOR AGENT - Better streaming support!
+      // 🎯 Using the orchestrator agent with proper memory context
       const orchestrator = mastra.getAgent("orchestratorAgent")
 
       if (!orchestrator) {
@@ -39,8 +39,10 @@ export async function streamChatResponse(
         throw new Error("Last message must be from user")
       }
 
-      // Stream the response from the orchestrator agent
+      // Stream the response from the orchestrator agent with proper memory context
       const response = await orchestrator.stream(latestUserMessage.content, {
+        resourceId, // 🔑 This enables memory persistence for the user
+        threadId, // 🔑 This enables conversation continuity
         maxSteps: 5,
         onStepFinish: ({ toolCalls, toolResults }) => {
           // Handle tool calls when a step finishes

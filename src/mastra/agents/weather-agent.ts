@@ -1,8 +1,8 @@
 import { openai } from "@ai-sdk/openai"
 import { Agent } from "@mastra/core/agent"
 import { Memory } from "@mastra/memory"
-import { LibSQLStore } from "@mastra/libsql"
 import { weatherTool } from "@/mastra/tools/weather-tool"
+import { postgresStore, vectorStore } from "@/mastra/database"
 
 export const weatherAgent = new Agent({
   name: "Weather Agent",
@@ -23,8 +23,15 @@ export const weatherAgent = new Agent({
   model: openai("gpt-4o-mini"),
   tools: { weatherTool },
   memory: new Memory({
-    storage: new LibSQLStore({
-      url: "file:../mastra.db", // path is relative to the .mastra/output directory
-    }),
+    storage: postgresStore,
+    vector: vectorStore,
+    embedder: openai.embedding("text-embedding-3-small"),
+    options: {
+      lastMessages: 10,
+      semanticRecall: {
+        topK: 3,
+        messageRange: 2,
+      },
+    },
   }),
 })

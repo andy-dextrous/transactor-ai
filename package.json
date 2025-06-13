@@ -19,6 +19,7 @@
     "@mastra/loggers": "^0.10.2",
     "@mastra/mcp": "^0.10.3",
     "@mastra/memory": "^0.10.3",
+    "@mastra/pg": "^0.10.3",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-aspect-ratio": "^1.1.7",

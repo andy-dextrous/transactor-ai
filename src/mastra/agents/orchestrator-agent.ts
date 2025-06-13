@@ -1,9 +1,11 @@
 import { openai } from "@ai-sdk/openai"
 import { Agent } from "@mastra/core/agent"
+import { Memory } from "@mastra/memory"
 import { createTool } from "@mastra/core/tools"
 import { z } from "zod"
 import { weatherAgent } from "./weather-agent"
 import { fileAgent } from "./file-agent"
+import { postgresStore, vectorStore } from "@/mastra/database"
 
 /*************************************************************************/
 /*  AGENT TOOLS - Converting agents into callable tools
@@ -78,4 +80,16 @@ export const orchestratorAgent = new Agent({
     weatherAgentTool,
     fileAgentTool,
   },
+  memory: new Memory({
+    storage: postgresStore,
+    vector: vectorStore,
+    embedder: openai.embedding("text-embedding-3-small"),
+    options: {
+      lastMessages: 15, // More context for orchestration decisions
+      semanticRecall: {
+        topK: 5, // More recall for better routing
+        messageRange: 3,
+      },
+    },
+  }),
 })

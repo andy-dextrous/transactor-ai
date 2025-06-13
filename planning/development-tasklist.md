@@ -1,25 +1,27 @@
 # Transactor 2.0 - Development Tasklist
 
-**Version:** 1.1  
+**Version:** 2.0  
 **Date:** January 2025  
 **Status:** ~40% Foundation Complete - Focus on Backend & AI Integration  
+**Architecture:** Mastra + Supabase + Prisma + Next.js 15
 **Approach:** Vertical MVP by Persona - Build complete functionality for one user journey before expanding
 
 ---
 
 ## Overview
 
-This tasklist implements a **vertical-first approach** where we build complete end-to-end functionality for one persona before moving to the next. This ensures we have a fully working proof-of-concept that validates our chat-centric, AI-first architecture.
+This tasklist implements a **vertical-first approach** where we build complete end-to-end functionality for one persona before moving to the next. This ensures we have a fully working proof-of-concept that validates our chat-centric, AI-first architecture powered by **Mastra agents**.
 
 **✅ COMPLETED FOUNDATION (~40% of Phase 1)**:
 
-- Complete Next.js 15 + Convex + Tailwind CSS 4 setup
+- Complete Next.js 15 + Mastra + Tailwind CSS 4 setup
 - Comprehensive UI library (47+ components)
 - Full design system with theme, typography, utilities
 - All core dependencies installed and configured
 - Basic project structure and component library
+- Mastra + Supabase integration established
 
-**🎯 CURRENT PRIORITY**: Backend data model, AI agent integration, and chat-to-database connectivity
+**🎯 CURRENT PRIORITY**: Prisma schema design, Mastra agent configuration, and chat-to-database connectivity
 
 **Phase Strategy:**
 
@@ -42,15 +44,16 @@ This tasklist implements a **vertical-first approach** where we build complete e
 #### ✅ 1.1 Project Infrastructure (COMPLETE)
 
 - [x] ✅ Initialize Next.js 15 project with App Router
-- [x] ✅ Setup Convex backend with agent components
+- [x] ✅ Setup Mastra backend with agent components
 - [x] ✅ Configure Tailwind CSS 4 with custom design system
 - [x] ✅ Setup TypeScript configuration
 - [x] ✅ Configure environment variables for development
 - [x] ✅ Setup GitHub repository and basic CI/CD
+- [x] ✅ Establish Mastra + Supabase connection via @mastra/pg
 
 #### ✅ 1.2 Core Dependencies Installation (COMPLETE)
 
-- [x] ✅ Install and configure `@convex-dev/agent` for AI agents
+- [x] ✅ Install and configure Mastra core and agents
 - [x] ✅ Setup Radix UI component library (47+ components built)
 - [x] ✅ Install form management (React Hook Form + Zod)
 - [x] ✅ Configure GSAP for animations
@@ -65,104 +68,115 @@ This tasklist implements a **vertical-first approach** where we build complete e
 - [x] ✅ Build complete design system (/app/css/)
 - [x] ✅ Create component library documentation (/library)
 
-**🎯 WEEK 1 PRIORITY: Data Model & Backend (URGENT)**
+**🎯 WEEK 1 PRIORITY: Database Schema & Mastra Integration (URGENT)**
 
-### 2.1 Convex Schema Expansion (CRITICAL - BLOCKING)
+### 2.1 Prisma Schema Design (CRITICAL - BLOCKING)
 
-- [ ] **🔥 URGENT: Expand schema.ts** - Replace basic messages table with comprehensive schema
-- [ ] Define `users` table with buyer persona fields
-- [ ] Create `properties` table for property data
-- [ ] Setup `transactions` table for purchase workflows
-- [ ] Define `conversation_panels` table for context management
-- [ ] Create `agent_tools` table for tool definitions
-- [ ] Setup `tool_executions` table for chat tool history
-- [ ] Create `conversation_context` table for AI memory
-- [ ] Add `financial_profiles` table for user financial data
-- [ ] Create `providers` table for service provider marketplace
-- [ ] Setup `quotes` table for provider quotes
-- [ ] Add `documents` table for file management
+- [ ] **🔥 URGENT: Install and configure Prisma** - Install Prisma CLI and client
+- [ ] **🔥 URGENT: Create comprehensive Prisma schema** - Design application data model
+- [ ] Define `User` model with buyer persona fields and Mastra integration
+- [ ] Create `Property` model for property data and search functionality
+- [ ] Setup `Transaction` model for purchase workflows
+- [ ] Define `Document` model for file management with AI analysis
+- [ ] Create `Provider` model for service provider marketplace
+- [ ] Setup `Quote` model for provider quotes and comparisons
+- [ ] Add `FinancialProfile` model for user financial data
+- [ ] Create `MarketData` model for property intelligence
+- [ ] Setup `Milestone` model for transaction tracking
+- [ ] Configure database relationships and constraints
+- [ ] Generate Prisma client and setup database connection
 
-### 2.2 Database Seeding (ENABLES AI TESTING)
+### 2.2 Mastra Agent Configuration (ENABLES AI FUNCTIONALITY)
 
+- [ ] **Configure Mastra core instance** with Supabase storage integration
+- [ ] **Setup BuyerAgent** - First-time buyer assistance specialist
+- [ ] **Configure FinanceAgent** - Mortgage and financial calculations
+- [ ] **Setup PropertyAgent** - Property search and analysis
+- [ ] **Configure DocumentAgent** - Contract and document analysis
+- [ ] **Setup MatchAgent** - Service provider matching
+- [ ] **Configure OrchestratorAgent** - Main conversation controller
+- [ ] **Setup agent memory and context persistence** via Mastra storage
+- [ ] **Configure agent tools** - Property search, calculators, document analysis
+- [ ] **Setup agent workflows** - Multi-step property buying processes
+
+### 2.3 Database Seeding & Migration (ENABLES REALISTIC TESTING)
+
+- [ ] **Run Prisma migrations** - Setup database schema in Supabase
 - [ ] **Seed service providers** - 20-30 providers per major city (conveyancers, brokers, inspectors)
 - [ ] **Seed sample properties** - 50-100 realistic listings across first-home buyer price ranges
 - [ ] **Seed market intelligence** - Current median prices, growth rates for 10-15 key suburbs per city
 - [ ] **Seed financial reference data** - Interest rates, stamp duty rates, first home buyer grants
 - [ ] **Create seeding scripts** - Automated database population for development/testing
 - [ ] **Add sample user personas** - Test profiles with different budgets and preferences
+- [ ] **Setup Prisma Studio** - Database admin interface for development
 
-### 2.3 Core Convex Functions (HIGH PRIORITY)
+### 2.4 Mastra + Prisma Integration Layer (HIGH PRIORITY)
 
-- [ ] User management functions (create, update, get)
-- [ ] Property search and management functions
-- [ ] Transaction workflow functions
-- [ ] Conversation context management functions
-- [ ] Tool execution tracking functions
-- [ ] File upload and document management functions
-- [ ] Provider matching and quote functions
-- [ ] Financial calculation functions
-
-### 2.4 AI Agent Setup (HIGH PRIORITY)
-
-- [ ] Configure basic Convex Agent with OpenAI integration
-- [ ] Setup agent instructions for first-time buyer assistance
-- [ ] Implement basic tool calling infrastructure
-- [ ] Create conversation memory and context system
-- [ ] Setup agent thread management
-- [ ] Configure real-time subscriptions
+- [ ] Create database service layer combining Mastra and Prisma
+- [ ] User management functions (create, update, get) via Prisma
+- [ ] Property search and management functions via Prisma
+- [ ] Transaction workflow functions bridging Mastra and Prisma
+- [ ] Document management with Prisma metadata and Mastra file storage
+- [ ] Provider matching using Prisma queries and Mastra vectors
+- [ ] Financial calculation persistence via Prisma
+- [ ] Agent context persistence via Mastra storage
 
 **WEEK 2 PRIORITY: Chat Interface Integration**
 
 ### 3.1 Main Dashboard Layout (INTEGRATE EXISTING UI)
 
 - [ ] **Create `/dashboard/[threadId?]` route** - Missing from current structure
-- [ ] **Connect existing ChatUI component** to Convex backend (currently mock)
+- [ ] **Connect existing ChatUI component** to Mastra backend (currently mock)
 - [ ] Build contextual panel (right panel, 40% width)
 - [ ] Implement mobile-responsive design (leverage existing design system)
-- [ ] **Replace mock chat** with real Convex agent integration
-- [ ] Add real-time message streaming
+- [ ] **Replace mock chat** with real Mastra agent integration
+- [ ] Add real-time message streaming via Mastra subscriptions
+- [ ] Integrate Prisma data queries for contextual panel content
 
 ### 3.2 Contextual Panel System (NEW COMPONENT)
 
-- [ ] Build `ContextualPanel` component with AI control
+- [ ] Build `ContextualPanel` component with Mastra agent control
 - [ ] Create `PropertySummaryCard` component (use existing property cards as base)
-- [ ] Build `FinancialSummary` component
-- [ ] Create `QuickActions` component
-- [ ] Implement `CalculationResults` component
+- [ ] Build `FinancialSummary` component pulling from Prisma financial profiles
+- [ ] Create `QuickActions` component with Mastra agent suggestions
+- [ ] Implement `CalculationResults` component for tool outputs
 - [ ] Add panel state management and real-time updates
+- [ ] Connect panel components to Prisma data sources
 
 ### 3.3 Chat-AI Integration (BACKEND CONNECTION)
 
-- [ ] **Connect chat to Convex Agent backend** (replace mock responses)
-- [ ] Implement real-time message streaming
+- [ ] **Connect chat to Mastra Agent backend** (replace mock responses)
+- [ ] Implement real-time message streaming via Mastra
 - [ ] Add typing indicators and loading states
-- [ ] Create message history and pagination
-- [ ] Implement conversation persistence
+- [ ] Create message history and pagination with Mastra storage
+- [ ] Implement conversation persistence via Mastra
 - [ ] Add error handling and retry logic
+- [ ] Bridge chat context to Prisma application data
 
 **WEEK 3 PRIORITY: Essential Tools Integration**
 
-### 4.1 Tool Infrastructure (NEW SYSTEM)
+### 4.1 Mastra Tool Infrastructure (NEW SYSTEM)
 
-- [ ] Create tool execution framework connecting chat to tools
-- [ ] Build tool definition system for agent integration
+- [ ] Create Mastra tool definitions for property domain
+- [ ] Build tool execution framework connecting chat to tools
 - [ ] Create inline chat result component system
-- [ ] Implement tool execution tracking
+- [ ] Implement tool execution tracking via Mastra
 - [ ] Add tool permissions and context management
+- [ ] Connect tools to Prisma data sources for calculations
 
-### 4.2 Convert Existing Demos to Working Tools
+### 4.2 Convert Existing Demos to Working Mastra Tools
 
-- [ ] **Mortgage Calculator Tool** - Convert existing demo to backend tool
+- [ ] **Mortgage Calculator Tool** - Convert existing demo to Mastra tool with Prisma persistence
 - [ ] **Stamp Duty Calculator Tool** - Convert demo + add state-specific logic
-- [ ] **Property Search Tool** - Build from existing property components
-- [ ] **Equity Calculator** - Convert existing demo components
+- [ ] **Property Search Tool** - Build from existing property components with Prisma queries
+- [ ] **Equity Calculator** - Convert existing demo components to Mastra tools
 
-### 4.3 Financial Tools Suite (BACKEND + UI INTEGRATION)
+### 4.3 Financial Tools Suite (MASTRA + PRISMA INTEGRATION)
 
-- [ ] Borrowing Capacity Calculator (backend functions)
+- [ ] Borrowing Capacity Calculator (Mastra tool + Prisma persistence)
 - [ ] Total Purchase Cost Calculator (combine multiple calculations)
 - [ ] Savings Goal Calculator (timeline projections)
-- [ ] First Home Buyer Grant integration
+- [ ] First Home Buyer Grant integration with Prisma user profiles
 
 **WEEK 4 PRIORITY: Route Structure & Core Flows**
 
@@ -177,93 +191,102 @@ This tasklist implements a **vertical-first approach** where we build complete e
 ### 5.2 Onboarding Experience (NEW)
 
 - [ ] Create welcome flow with role selection
-- [ ] Build chat-based onboarding in main dashboard
-- [ ] Implement progressive information gathering
+- [ ] Build chat-based onboarding in main dashboard with Mastra
+- [ ] Implement progressive information gathering via Mastra agents
 - [ ] Add smooth transition to main chat experience
-- [ ] Setup initial user profile creation
+- [ ] Setup initial user profile creation via Prisma
+- [ ] Connect onboarding to Mastra agent context initialization
 
 ### 5.3 Layout Integration (CONNECT EXISTING COMPONENTS)
 
-- [ ] **Add ConvexClientProvider to root layout** (currently missing)
+- [ ] **Add Mastra provider to root layout** (currently missing)
 - [ ] Setup proper navigation between routes
 - [ ] Implement authentication flow
-- [ ] Connect existing components to real data
+- [ ] Connect existing components to real Prisma data
+- [ ] Setup error boundaries for Mastra operations
 
 **WEEK 5-6: Advanced Features**
 
 ### 6.1 Marketplace Integration (NEW SYSTEM)
 
-- [ ] Create service provider data structure
-- [ ] Build provider matching algorithm
-- [ ] **Convert existing ServiceProviderCard** to work with real data
-- [ ] Implement quote request system
+- [ ] Create service provider data structure in Prisma
+- [ ] Build provider matching algorithm using Mastra vectors
+- [ ] **Convert existing ServiceProviderCard** to work with Prisma data
+- [ ] Implement quote request system via Mastra workflows
 - [ ] Build comparison and selection interface
+- [ ] Connect to Mastra agent recommendations
 
 ### 6.2 Transaction Management (NEW WORKFLOW)
 
-- [ ] Create transaction lifecycle management
-- [ ] Build milestone tracking system
-- [ ] **Convert existing timeline components** to real workflows
+- [ ] Create transaction lifecycle management via Prisma
+- [ ] Build milestone tracking system using Prisma and Mastra
+- [ ] **Convert existing timeline components** to real Prisma workflows
 - [ ] Implement progress visualization
-- [ ] Add automated notification system
+- [ ] Add automated notification system via Mastra
+- [ ] Setup workflow triggers and automations
 
 ### 6.3 Document Management (NEW SYSTEM)
 
-- [ ] Create document upload system with Convex file storage
-- [ ] Implement document categorization
-- [ ] Add basic AI document analysis
-- [ ] **Connect existing document components** to backend
+- [ ] Create document upload system with Mastra file storage
+- [ ] Implement document categorization via Prisma
+- [ ] Add AI document analysis via Mastra agents
+- [ ] **Connect existing document components** to Prisma backend
 - [ ] Build document status tracking
+- [ ] Setup automated document processing workflows
 
 **WEEK 6-7: Polish & Testing**
 
 ### 7.1 UX Refinement (POLISH EXISTING)
 
-- [ ] Optimize chat conversation flows
+- [ ] Optimize chat conversation flows with Mastra
 - [ ] Refine contextual panel responsiveness
 - [ ] **Enhance existing mobile design** for chat interface
 - [ ] Add loading states and transitions (leverage existing animations)
-- [ ] Implement comprehensive error handling
+- [ ] Implement comprehensive error handling for Mastra + Prisma
+- [ ] Optimize real-time updates and subscriptions
 
-### 7.2 AI Agent Optimization (FINE-TUNE)
+### 7.2 Mastra Agent Optimization (FINE-TUNE)
 
 - [ ] Fine-tune agent responses and personality
-- [ ] Optimize tool calling accuracy
-- [ ] Improve context understanding
+- [ ] Optimize tool calling accuracy and speed
+- [ ] Improve context understanding and memory
 - [ ] Add proactive assistance features
-- [ ] Implement conversation learning
+- [ ] Implement conversation learning and adaptation
+- [ ] Setup agent performance monitoring
 
 ### 7.3 Testing & Deployment (FINAL)
 
-- [ ] Comprehensive end-to-end testing
-- [ ] User experience testing
-- [ ] Performance optimization
-- [ ] Security audit
+- [ ] Comprehensive end-to-end testing of Mastra workflows
+- [ ] User experience testing with real agent interactions
+- [ ] Performance optimization for Mastra + Supabase + Prisma
+- [ ] Security audit of agent permissions and data access
 - [ ] Deployment setup and configuration
-- [ ] Monitoring and analytics setup
+- [ ] Monitoring and analytics setup for agent performance
 
 ---
 
 ## 🎯 IMMEDIATE NEXT STEPS (This Week)
 
-### **Priority 1: Convex Schema & Functions (BLOCKING EVERYTHING)**
+### **Priority 1: Prisma Schema & Database Setup (BLOCKING EVERYTHING)**
 
-1. **Expand `/src/convex/schema.ts`** with comprehensive data model
-2. **Seed database with realistic data** - Enable meaningful AI conversations from day 1
-3. **Create core Convex functions** for users, properties, transactions
-4. **Setup AI agent configuration** with tool calling
+1. **Install Prisma and configure with Supabase** - Complete database layer setup
+2. **Design comprehensive Prisma schema** - All application entities and relationships
+3. **Run migrations and seed database** - Enable meaningful agent interactions from day 1
+4. **Setup Prisma Studio** - Database admin interface for development
 
-### **Priority 2: Connect Chat to Backend (HIGH IMPACT)**
+### **Priority 2: Mastra Agent Configuration (ENABLES AI)**
+
+1. **Configure core Mastra agents** - Buyer, Finance, Property, Document, Match agents
+2. **Setup agent tools and workflows** - Property search, calculations, document analysis
+3. **Connect agents to Prisma data** - Bridge AI functionality to application data
+4. **Test agent interactions** - Ensure agents can read/write application data
+
+### **Priority 3: Chat-Database Integration (HIGH IMPACT)**
 
 1. **Create `/dashboard/[threadId?]` route**
-2. **Connect existing ChatUI** to real Convex agents (remove mocks)
-3. **Build contextual panel system**
-
-### **Priority 3: Tool Integration (USER VALUE)**
-
-1. **Convert calculator demos** to working backend tools
-2. **Create tool execution framework**
-3. **Add inline result display**
+2. **Connect existing ChatUI** to Mastra agents (remove mocks)
+3. **Build contextual panel system** with Prisma data integration
+4. **Setup real-time subscriptions** for chat and panel updates
 
 ---
 
@@ -272,17 +295,17 @@ This tasklist implements a **vertical-first approach** where we build complete e
 **Target Persona:** Raj, 41, Upgrader Seller  
 **Goal:** Dual transaction management (sell + buy simultaneously)
 
-### 2.1 Dual Transaction Management
+### 2.1 Dual Transaction Management via Mastra
 
-- [ ] Extend transaction system for linked sale/purchase
-- [ ] Create synchronized timeline management
-- [ ] Build equity calculation tools
+- [ ] Extend Prisma transaction model for linked sale/purchase
+- [ ] Create synchronized timeline management via Mastra workflows
+- [ ] Build equity calculation tools using Mastra agents
 - [ ] Implement settlement coordination logic
 - [ ] Add bridging finance detection and recommendations
 
-### 2.2 Equity Calculator Suite
+### 2.2 Equity Calculator Suite (Mastra Tools)
 
-- [ ] Build current property valuation tools
+- [ ] Build current property valuation tools via Mastra
 - [ ] Create available equity calculations
 - [ ] Implement upgrade buying power calculator
 - [ ] Add refinancing scenario analysis
@@ -290,15 +313,15 @@ This tasklist implements a **vertical-first approach** where we build complete e
 
 ### 2.3 Sale Process Integration
 
-- [ ] Add property listing workflow
-- [ ] Create real estate agent marketplace
+- [ ] Add property listing workflow via Mastra
+- [ ] Create real estate agent marketplace (Prisma + Mastra matching)
 - [ ] Implement marketing timeline management
 - [ ] Add offer management system
 - [ ] Build sale progress tracking
 
 ### 2.4 Risk Management Tools
 
-- [ ] Create settlement date conflict detection
+- [ ] Create settlement date conflict detection via Mastra
 - [ ] Implement bridging finance calculators
 - [ ] Add market timing recommendations
 - [ ] Create contingency planning tools
@@ -314,9 +337,9 @@ This tasklist implements a **vertical-first approach** where we build complete e
 ### 3.1 Conveyancer Dashboard
 
 - [ ] Create `/professional/conveyancer` routes
-- [ ] Build client transaction management
+- [ ] Build client transaction management via Prisma
 - [ ] Implement milestone tracking for professionals
-- [ ] Add automated client communication
+- [ ] Add automated client communication via Mastra
 - [ ] Create document workflow management
 - [ ] Build commission tracking
 
@@ -344,7 +367,7 @@ This tasklist implements a **vertical-first approach** where we build complete e
 **Target Persona:** Michael, Recent Buyer with Legal Issues  
 **Goal:** Legal issue resolution and post-purchase support
 
-### 4.1 Legal Issue Assessment
+### 4.1 Legal Issue Assessment via Mastra
 
 - [ ] Create legal issue categorization system
 - [ ] Build document analysis for legal problems
@@ -355,7 +378,7 @@ This tasklist implements a **vertical-first approach** where we build complete e
 ### 4.2 Legal Professional Marketplace
 
 - [ ] Add specialized legal professional profiles
-- [ ] Create issue-specific matching
+- [ ] Create issue-specific matching via Mastra
 - [ ] Implement legal quote system
 - [ ] Add dispute resolution tracking
 - [ ] Build legal outcome monitoring
@@ -397,9 +420,9 @@ This tasklist implements a **vertical-first approach** where we build complete e
 
 ### Phase 1 Success Criteria
 
-- [ ] 90% of user tasks completed within chat interface
-- [ ] Context panel updates automatically in <2 seconds
-- [ ] Tool execution and display in <3 seconds
+- [ ] 90% of user tasks completed within chat interface powered by Mastra
+- [ ] Context panel updates automatically in <2 seconds using Prisma queries
+- [ ] Mastra tool execution and display in <3 seconds
 - [ ] Complete property purchase workflow functional
 - [ ] User can complete first-time buyer journey end-to-end
 
@@ -407,16 +430,16 @@ This tasklist implements a **vertical-first approach** where we build complete e
 
 - [ ] Chat-first experience maintained across all personas
 - [ ] Contextual panel system adapts to each user journey
-- [ ] AI agent provides relevant assistance for each persona
+- [ ] Mastra agents provide relevant assistance for each persona
 - [ ] Marketplace integrations work seamlessly
 - [ ] Real-time updates and notifications functional
 
 ### Technical Performance
 
 - [ ] Mobile responsive across all features
-- [ ] Real-time synchronization working reliably
-- [ ] AI agent response time <3 seconds
-- [ ] Data persistence and consistency maintained
+- [ ] Real-time synchronization working reliably via Mastra
+- [ ] Mastra agent response time <3 seconds
+- [ ] Data persistence and consistency maintained across Mastra + Prisma
 - [ ] Security and privacy requirements met
 
 ---
@@ -425,16 +448,18 @@ This tasklist implements a **vertical-first approach** where we build complete e
 
 ### Key Principles
 
-1. **Chat-First Always**: Every feature must work within the chat interface
+1. **Chat-First Always**: Every feature must work within the Mastra-powered chat interface
 2. **Context Panel Intelligence**: Panel must update automatically based on conversation
-3. **Tool Integration**: All tools must display results inline in chat
+3. **Tool Integration**: All Mastra tools must display results inline in chat
 4. **Mobile Optimization**: Chat interface must work perfectly on mobile
-5. **AI-Driven UX**: Let AI decide what to show users, minimize manual navigation
+5. **AI-Driven UX**: Let Mastra agents decide what to show users, minimize manual navigation
 
 ### Technical Stack Reminders
 
 - Next.js 15 with App Router ✅
-- Convex for backend with agent components ✅
+- Mastra for AI agents and workflows ✅
+- Supabase for database (via Mastra + Prisma) ✅
+- Prisma for type-safe database operations ✅
 - Tailwind CSS 4 for styling ✅
 - Radix UI for components ✅
 - GSAP for animations ✅
@@ -448,21 +473,22 @@ This tasklist implements a **vertical-first approach** where we build complete e
 - Complete design system accelerates development
 - All dependencies properly configured
 - Strong component library and demos to convert
+- Mastra + Supabase integration established
 
 **🎯 FOCUS AREAS:**
 
-- Backend data model is critical path
+- Prisma schema design is critical path
+- Mastra agent configuration essential
 - Chat-to-database integration needed
 - Route structure requires completion
-- AI agent configuration essential
 
 ### Phase Dependencies
 
-- **Data model completion blocks all other backend work**
-- Chat integration depends on agent setup
-- Tools depend on both backend functions and chat integration
+- **Prisma schema completion blocks all database work**
+- **Mastra agent setup blocks chat integration**
+- Tools depend on both Mastra configuration and Prisma data
 - Each phase builds on the previous foundation
 - Context panel system from Phase 1 extends to all subsequent phases
-- AI agent capabilities grow with each phase
+- Mastra agent capabilities grow with each phase
 
-This tasklist reflects the excellent foundation work completed and focuses remaining effort on backend integration, AI agents, and completing the chat-centric user experience.
+This tasklist reflects the architectural shift to Mastra + Supabase + Prisma while maintaining the excellent foundation work completed and focusing remaining effort on agent integration, database design, and completing the chat-centric user experience.

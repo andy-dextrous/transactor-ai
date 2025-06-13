@@ -1,8 +1,9 @@
 # Transactor 2.0 - App Structure & Data Model
 
-**Version:** 1.0  
+**Version:** 2.0  
 **Date:** January 2025  
-**Purpose:** Comprehensive technical blueprint for the AI-driven property concierge platform
+**Purpose:** Comprehensive technical blueprint for the AI-driven property concierge platform  
+**Architecture:** Mastra + Supabase + Prisma + Next.js 15
 
 ---
 
@@ -10,24 +11,27 @@
 
 ### 1.1 Technology Stack Integration
 
-Based on the package.json analysis, the application leverages:
+Based on the package.json analysis and architectural decisions, the application leverages:
 
 - **Frontend**: Next.js 15 (App Router) + React 19 + Tailwind CSS 4
 - **UI Components**: Radix UI primitives with custom design system
-- **Real-time Backend**: Convex for database, auth, and AI agents
-- **AI Orchestration**: `@convex-dev/agent` for durable AI workflows
+- **Database**: Supabase PostgreSQL with connection pooling
+- **AI Orchestration**: Mastra for durable AI workflows and agent management
+- **Database ORM**: Prisma for type-safe database operations
+- **AI Storage**: Mastra's native storage integration with Supabase
 - **Animations**: GSAP with React integration
 - **Data Visualization**: Recharts for financial tools
 - **Form Management**: React Hook Form with Zod validation
 
-### 1.2 Agent-First Architecture Philosophy
+### 1.2 Mastra-First Architecture Philosophy
 
-The application operates as an **AI orchestration platform** where every user interaction triggers intelligent agent workflows. The system emphasizes:
+The application operates as an **AI orchestration platform** powered by Mastra where every user interaction triggers intelligent agent workflows. The system emphasizes:
 
-1. **Proactive Intelligence**: Agents anticipate user needs rather than waiting for commands
-2. **Context Persistence**: Every conversation and action builds on previous context
-3. **Workflow Automation**: Complex property transactions are decomposed into managed workflows
-4. **Real-time Collaboration**: All stakeholders share a unified, live workspace
+1. **Proactive Intelligence**: Mastra agents anticipate user needs rather than waiting for commands
+2. **Context Persistence**: Every conversation and action builds on previous context via Mastra storage
+3. **Workflow Automation**: Complex property transactions are decomposed into Mastra-managed workflows
+4. **Real-time Collaboration**: All stakeholders share a unified, live workspace powered by Supabase
+5. **Hybrid Data Architecture**: Mastra handles AI/agent data, Prisma manages application data
 
 ---
 
@@ -412,236 +416,783 @@ const ContextPanelManager = {
 
 ---
 
-## 3. Convex Data Model (Chat-Centric)
+## 3. Hybrid Data Model (Mastra + Prisma)
 
-### 3.1 Core Entity Tables
+### 3.1 Architecture Overview
 
-#### 3.1.1 User Management
+The application uses a **hybrid data architecture**:
+
+- **Mastra Storage**: Handles AI agent data, conversations, workflows, and vector embeddings
+- **Prisma + Supabase**: Manages application data like users, properties, transactions, and business logic
+- **Shared Database**: Both systems operate on the same Supabase PostgreSQL instance
 
 ```typescript
-// users table
-{
-  _id: Id<"users">,
-  authId: string,
-  email: string,
-  phone?: string,
-  role: "buyer" | "seller" | "investor" | "conveyancer" | "broker" | "inspector",
-  profile: {
-    firstName: string,
-    lastName: string,
-    preferredName?: string,
-    avatar?: string
-  },
-  preferences: {
-    notifications: {
-      email: boolean,
-      sms: boolean,
-      push: boolean
+// Hybrid Architecture Pattern
+export class DataService {
+  // Mastra for AI/Agent operations
+  private mastra = new Mastra({ storage: postgresStore })
+
+  // Prisma for application data
+  private prisma = new PrismaClient()
+
+  // Bridge operations between both systems
+  async createTransactionWithAgent(data: TransactionData) {
+    // Create transaction in Prisma
+    const transaction = await this.prisma.transaction.create({ data })
+
+    // Initialize agent workflow in Mastra
+    const workflow = await this.mastra.getWorkflow("propertyPurchase")
+    const run = workflow.createRun()
+    await run.start({ transactionId: transaction.id })
+
+    return transaction
+  }
+}
+```
+
+### 3.2 Prisma Schema Design
+
+#### 3.2.1 Core Application Models
+
+```prisma
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  authId    String?  @unique
+  email     String   @unique
+  phone     String?
+  role      UserRole
+
+  // Profile information
+  firstName     String
+  lastName      String
+  preferredName String?
+  avatar        String?
+
+  // Preferences
+  emailNotifications Boolean @default(true)
+  smsNotifications   Boolean @default(true)
+  pushNotifications  Boolean @default(true)
+  timezone          String  @default("Australia/Sydney")
+  language          String  @default("en")
+
+  status        UserStatus @default(ACTIVE)
+  createdAt     DateTime   @default(now())
+  lastActiveAt  DateTime   @default(now())
+
+  // Relations
+  transactions      TransactionParticipant[]
+  stakeholderRoles  PropertyStakeholder[]
+  documents         Document[]
+  quotes            Quote[]
+  reviews           Review[]
+  provider          Provider?
+  financialProfile  FinancialProfile?
+  mastraIntegrations MastraIntegration[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  BUYER
+  SELLER
+  INVESTOR
+  CONVEYANCER
+  MORTGAGE_BROKER
+  BUILDING_INSPECTOR
+  REAL_ESTATE_AGENT
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+```
+
+model Property {
+id String @id @default(cuid())
+
+// Address details
+street String
+suburb String
+state String
+postcode String
+country String @default("AU")
+
+// Coordinates
+latitude Decimal?
+longitude Decimal?
+
+// Property details
+type PropertyType
+bedrooms Int?
+bathrooms Int?
+carSpaces Int?
+landSize Int? // in square meters
+buildingSize Int? // in square meters
+yearBuilt Int?
+
+// Valuation
+estimatedValue Decimal?
+valuationUpdated DateTime?
+valuationSource String?
+valuationConfidence ConfidenceLevel?
+
+status PropertyStatus @default(ACTIVE)
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
+
+// Relations
+transactions Transaction[]
+documents Document[]
+stakeholders PropertyStakeholder[]
+marketData MarketData[]
+
+@@map("properties")
+}
+
+model PropertyStakeholder {
+id String @id @default(cuid())
+propertyId String
+userId String
+role StakeholderRole
+relationship String?
+
+property Property @relation(fields: [propertyId], references: [id])
+user User @relation(fields: [userId], references: [id])
+
+@@unique([propertyId, userId, role])
+@@map("property_stakeholders")
+}
+
+enum PropertyType {
+HOUSE
+APARTMENT
+TOWNHOUSE
+LAND
+COMMERCIAL
+}
+
+enum PropertyStatus {
+ACTIVE
+UNDER_CONTRACT
+SETTLED
+WITHDRAWN
+OFF_MARKET
+}
+
+enum StakeholderRole {
+OWNER
+BUYER
+SELLER
+AGENT
+CONVEYANCER
+INTERESTED_PARTY
+}
+
+enum ConfidenceLevel {
+HIGH
+MEDIUM
+LOW
+}
+
+model Transaction {
+id String @id @default(cuid())
+propertyId String
+type TransactionType
+
+// Timeline dates
+contractDate DateTime?
+coolOffExpiry DateTime?
+financeApprovalDue DateTime?
+inspectionDue DateTime?
+settlementDate DateTime?
+actualSettlement DateTime?
+
+// Financial details
+purchasePrice Decimal?
+deposit Decimal?
+loanAmount Decimal?
+stampDuty Decimal?
+legalFee Decimal?
+otherCosts Decimal?
+
+status TransactionStatus @default(PLANNING)
+mastraThreadId String? // Reference to Mastra agent thread
+
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
+
+// Relations
+property Property @relation(fields: [propertyId], references: [id])
+participants TransactionParticipant[]
+milestones Milestone[]
+documents Document[]
+quotes Quote[]
+
+@@map("transactions")
+}
+
+model TransactionParticipant {
+id String @id @default(cuid())
+transactionId String
+userId String
+role ParticipantRole
+status ParticipantStatus @default(ACTIVE)
+
+transaction Transaction @relation(fields: [transactionId], references: [id])
+user User @relation(fields: [userId], references: [id])
+
+@@unique([transactionId, userId, role])
+@@map("transaction_participants")
+}
+
+model Milestone {
+id String @id @default(cuid())
+transactionId String
+title String
+description String?
+dueDate DateTime
+completedAt DateTime?
+status MilestoneStatus @default(PENDING)
+isOptional Boolean @default(false)
+sortOrder Int
+
+transaction Transaction @relation(fields: [transactionId], references: [id])
+
+@@map("milestones")
+}
+
+enum TransactionType {
+PURCHASE
+SALE
+REFINANCE
+LEASE
+}
+
+enum TransactionStatus {
+PLANNING
+CONTRACT_SIGNED
+FINANCE_PENDING
+INSPECTIONS_DUE
+READY_TO_SETTLE
+SETTLED
+CANCELLED
+}
+
+enum ParticipantRole {
+BUYER
+SELLER
+CONVEYANCER
+MORTGAGE_BROKER
+REAL_ESTATE_AGENT
+BUILDING_INSPECTOR
+SOLICITOR
+}
+
+enum ParticipantStatus {
+ACTIVE
+COMPLETED
+WITHDRAWN
+}
+
+enum MilestoneStatus {
+PENDING
+IN_PROGRESS
+COMPLETED
+OVERDUE
+CANCELLED
+}
+
+### 3.3 Mastra Integration Layer
+
+#### 3.3.1 Mastra Agent Configuration
+
+The Mastra system handles AI agent data automatically through its built-in storage system. However, we create bridge data in Prisma to connect application entities to Mastra workflows:
+
+```prisma
+model MastraIntegration {
+  id              String @id @default(cuid())
+  transactionId   String? @unique
+  userId          String
+  mastraThreadId  String @unique // Mastra agent thread ID
+  agentType       AgentType
+  currentPhase    TransactionPhase
+  priority        Priority @default(MEDIUM)
+
+  status    MastraStatus @default(ACTIVE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
+  user        User         @relation(fields: [userId], references: [id])
+
+  @@map("mastra_integrations")
+}
+
+enum AgentType {
+  BUYER_AGENT
+  SELLER_AGENT
+  FINANCE_AGENT
+  PROPERTY_AGENT
+  DOCUMENT_AGENT
+  MATCH_AGENT
+  ORCHESTRATOR
+}
+
+enum TransactionPhase {
+  ONBOARDING
+  PROPERTY_SEARCH
+  FINANCE_ARRANGEMENT
+  CONTRACT_NEGOTIATION
+  DUE_DILIGENCE
+  SETTLEMENT
+  POST_SETTLEMENT
+}
+
+enum Priority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum MastraStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+  ARCHIVED
+}
+```
+
+#### 3.3.2 Agent-Application Data Bridge
+
+```typescript
+// Service layer bridging Mastra and Prisma
+export class MastraService {
+  private mastra = new Mastra({
+    storage: postgresStore,
+    agents: {
+      buyerAgent,
+      financeAgent,
+      propertyAgent,
+      documentAgent,
+      matchAgent,
+      orchestratorAgent,
     },
-    timezone: string,
-    language: "en" | "zh" | "vi" // Top languages in Australian property market
-  },
-  status: "active" | "inactive" | "suspended",
-  createdAt: number,
-  lastActiveAt: number
+  })
+
+  private prisma = new PrismaClient()
+
+  async createTransactionWithAgent(data: TransactionCreateInput) {
+    // Create transaction in Prisma
+    const transaction = await this.prisma.transaction.create({ data })
+
+    // Initialize Mastra workflow
+    const workflow = await this.mastra.getWorkflow("propertyTransaction")
+    const run = workflow.createRun()
+    const result = await run.start({
+      transactionId: transaction.id,
+      userId: data.userId,
+      transactionType: data.type,
+    })
+
+    // Create bridge record
+    await this.prisma.mastraIntegration.create({
+      data: {
+        transactionId: transaction.id,
+        userId: data.userId,
+        mastraThreadId: result.threadId,
+        agentType: this.determineAgentType(data.type),
+        currentPhase: "ONBOARDING",
+      },
+    })
+
+    return transaction
+  }
+
+  async sendMessageToAgent(threadId: string, message: string) {
+    const integration = await this.prisma.mastraIntegration.findUnique({
+      where: { mastraThreadId: threadId },
+      include: { transaction: true, user: true },
+    })
+
+    if (!integration) throw new Error("Agent thread not found")
+
+    // Send message to Mastra agent
+    return await this.mastra.sendMessage(threadId, {
+      content: message,
+      context: {
+        transactionId: integration.transactionId,
+        userRole: integration.user.role,
+        currentPhase: integration.currentPhase,
+      },
+    })
+  }
 }
 ```
 
-#### 3.1.2 Property Management
+### 3.4 Supporting Application Models
 
-```typescript
-// properties table
-{
-  _id: Id<"properties">,
-  address: {
-    street: string,
-    suburb: string,
-    state: string,
-    postcode: string,
-    country: "AU"
-  },
-  coordinates: {
-    lat: number,
-    lon: number
-  },
-  propertyDetails: {
-    type: "house" | "apartment" | "townhouse" | "land",
-    bedrooms?: number,
-    bathrooms?: number,
-    carSpaces?: number,
-    landSize?: number,
-    buildingSize?: number,
-    yearBuilt?: number
-  },
-  valuation: {
-    estimatedValue: number,
-    lastUpdated: number,
-    source: "corelogic" | "domain" | "manual",
-    confidence: "high" | "medium" | "low"
-  },
-  stakeholders: [{
-    userId: Id<"users">,
-    role: "owner" | "buyer" | "seller" | "agent" | "conveyancer",
-    relationship: string
-  }],
-  status: "active" | "under_contract" | "settled" | "withdrawn",
-  createdAt: number
+#### 3.4.1 Document Management
+
+```prisma
+model Document {
+  id            String @id @default(cuid())
+  transactionId String?
+  propertyId    String?
+  uploadedBy    String
+
+  // File details
+  filename      String
+  originalName  String
+  fileUrl       String
+  mimeType      String
+  fileSize      Int
+
+  // Document classification
+  type          DocumentType
+  category      DocumentCategory @default(OTHER)
+
+  // AI Analysis (optional - can be null until processed)
+  aiSummary         String?
+  keyPoints         String[]
+  riskFlags         String[]
+  complianceStatus  ComplianceStatus?
+  confidenceScore   Decimal?
+  lastAnalyzed      DateTime?
+
+  status      DocumentStatus @default(UPLOADED)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
+  property    Property?    @relation(fields: [propertyId], references: [id])
+  uploader    User         @relation(fields: [uploadedBy], references: [id])
+
+  @@map("documents")
+}
+
+enum DocumentType {
+  CONTRACT_OF_SALE
+  BUILDING_INSPECTION
+  PEST_INSPECTION
+  STRATA_REPORT
+  COUNCIL_CERTIFICATE
+  BANK_STATEMENT
+  PAYSLIP
+  TAX_RETURN
+  ID_DOCUMENT
+  INSURANCE_CERTIFICATE
+  VALUATION_REPORT
+  SURVEY_PLAN
+  OTHER
+}
+
+enum DocumentCategory {
+  LEGAL
+  FINANCIAL
+  INSPECTION
+  IDENTITY
+  INSURANCE
+  COMPLIANCE
+  OTHER
+}
+
+enum ComplianceStatus {
+  COMPLIANT
+  REQUIRES_REVIEW
+  NON_COMPLIANT
+  PENDING_ANALYSIS
+}
+
+enum DocumentStatus {
+  UPLOADED
+  PROCESSING
+  ANALYZED
+  APPROVED
+  REJECTED
+  ARCHIVED
 }
 ```
 
-#### 3.1.3 Transaction Management
+#### 3.4.2 Service Provider Management
 
-```typescript
-// transactions table
-{
-  _id: Id<"transactions">,
-  propertyId: Id<"properties">,
-  type: "purchase" | "sale" | "refinance",
-  participants: [{
-    userId: Id<"users">,
-    role: "buyer" | "seller" | "conveyancer" | "broker" | "agent",
-    status: "active" | "completed" | "withdrawn"
-  }],
-  timeline: {
-    contractDate?: number,
-    coolOffExpiry?: number,
-    financeApprovalDue?: number,
-    inspectionDue?: number,
-    settlementDate?: number,
-    actualSettlement?: number
-  },
-  financial: {
-    purchasePrice?: number,
-    deposit?: number,
-    loanAmount?: number,
-    stampDuty?: number,
-    legalFee?: number,
-    otherCosts?: number
-  },
-  status: "planning" | "contract_signed" | "finance_pending" | "settled" | "cancelled",
-  agentThreadId: Id<"agent_threads">,
-  createdAt: number,
-  updatedAt: number
+```prisma
+model Provider {
+  id           String @id @default(cuid())
+  userId       String @unique // Links to User account
+  businessName String
+  serviceType  ServiceType
+
+  // Business details
+  abn              String?
+  licenseNumber    String?
+  accreditations   String[]
+  yearsExperience  Int
+
+  // Service information
+  serviceAreas     String[] // Postcodes or regions
+  specializations  String[]
+
+  // Pricing
+  feeStructure     FeeStructure
+  basePrice        Decimal?
+  priceRangeMin    Decimal?
+  priceRangeMax    Decimal?
+  pricingDetails   String?
+
+  // Performance metrics
+  averageRating      Decimal? @default(0)
+  totalReviews       Int @default(0)
+  responseTimeHours  Int? // Average response time
+  completionRate     Decimal? // Success rate percentage
+
+  // Availability
+  currentCapacity Int @default(0)
+  maxCapacity     Int
+  isAcceptingNew  Boolean @default(true)
+
+  status    ProviderStatus @default(ACTIVE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user    User    @relation(fields: [userId], references: [id])
+  quotes  Quote[]
+  reviews Review[]
+
+  @@map("providers")
+}
+
+model Quote {
+  id            String @id @default(cuid())
+  transactionId String
+  providerId    String
+  requestedBy   String
+
+  // Quote details
+  serviceType     ServiceType
+  scopeDescription String
+  requirements    String[]
+  specialConditions String[]
+
+  // Pricing
+  totalFee        Decimal
+  feeBreakdown    Json // Flexible structure for different fee components
+  paymentTerms    String
+  validUntil      DateTime
+
+  // Timeline
+  proposedStartDate DateTime?
+  estimatedDuration Int? // Days
+  proposedCompletion DateTime?
+
+  status      QuoteStatus @default(PENDING)
+  providedAt  DateTime @default(now())
+  respondedAt DateTime?
+  acceptedAt  DateTime?
+
+  // Relations
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+  provider    Provider    @relation(fields: [providerId], references: [id])
+  requester   User        @relation(fields: [requestedBy], references: [id])
+
+  @@map("quotes")
+}
+
+model Review {
+  id         String @id @default(cuid())
+  providerId String
+  reviewerId String
+  transactionId String?
+
+  rating     Int // 1-5 stars
+  title      String?
+  comment    String?
+
+  // Review categories
+  responsiveness Int? // 1-5
+  professionalism Int? // 1-5
+  valueForMoney   Int? // 1-5
+  quality         Int? // 1-5
+
+  isVerified Boolean @default(false)
+  createdAt  DateTime @default(now())
+
+  // Relations
+  provider    Provider     @relation(fields: [providerId], references: [id])
+  reviewer    User         @relation(fields: [reviewerId], references: [id])
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
+
+  @@map("reviews")
+}
+
+enum ServiceType {
+  CONVEYANCING
+  MORTGAGE_BROKER
+  BUILDING_INSPECTOR
+  PEST_INSPECTOR
+  REAL_ESTATE_AGENT
+  SOLICITOR
+  VALUER
+  SURVEYOR
+  INSURANCE_BROKER
+}
+
+enum FeeStructure {
+  FIXED
+  PERCENTAGE
+  HOURLY
+  TIERED
+}
+
+enum ProviderStatus {
+  ACTIVE
+  BUSY
+  UNAVAILABLE
+  SUSPENDED
+}
+
+enum QuoteStatus {
+  PENDING
+  PROVIDED
+  ACCEPTED
+  DECLINED
+  EXPIRED
+  CANCELLED
 }
 ```
 
-### 3.2 AI Agent System Tables
+#### 3.4.3 Financial Profiles & Market Data
 
-#### 3.2.1 Agent Orchestration
+```prisma
+model FinancialProfile {
+  id     String @id @default(cuid())
+  userId String @unique
 
-```typescript
-// agent_threads table
-{
-  _id: Id<"agent_threads">,
-  transactionId?: Id<"transactions">,
-  userId: Id<"users">,
-  orchestratorAgentId: string,
-  activeAgents: [{
-    agentType: "buyer" | "seller" | "finance" | "conveyancing" | "match" | "insights",
-    agentId: string,
-    status: "active" | "paused" | "completed",
-    context: object, // Agent-specific context
-    memory: object   // Persistent agent memory
-  }],
-  currentPhase: "onboarding" | "search" | "contract" | "settlement" | "ownership",
-  metadata: {
-    priority: "high" | "medium" | "low",
-    tags: string[],
-    lastAgentActivity: number
-  },
-  status: "active" | "archived",
-  createdAt: number
-}
-```
+  // Employment information
+  employmentStatus   EmploymentStatus
+  grossIncome        Decimal
+  netIncome          Decimal
+  incomeFrequency    IncomeFrequency
+  employer           String?
+  yearsInRole        Decimal?
+  employmentType     EmploymentType
 
-#### 3.2.2 Conversation Management & Tool System
+  // Assets
+  savings            Decimal @default(0)
+  propertyEquity     Decimal @default(0)
+  superannuation     Decimal @default(0)
+  otherAssets        Decimal @default(0)
 
-```typescript
-// Using Convex Agent component's built-in thread and message management
-// Leverages components.agent.threads and components.agent.messages tables
+  // Liabilities
+  creditCardDebt     Decimal @default(0)
+  personalLoans      Decimal @default(0)
+  existingMortgage   Decimal @default(0)
+  otherLiabilities   Decimal @default(0)
 
-// conversation_panels table - Manages contextual panel state
-{
-  _id: Id<"conversation_panels">,
-  threadId: string,        // Convex agent thread ID
-  userId: Id<"users">,
-  currentContext: {
-    activeProperty?: {
-      id: string,
-      address: string,
-      price: number,
-      type: "target" | "current" | "comparison"
-    },
-    activeTransaction?: {
-      id: Id<"transactions">,
-      phase: "search" | "contract" | "finance" | "settlement" | "ownership",
-      priority: "high" | "medium" | "low"
-    },
-    activeCalculations: [{
-      toolName: string,
-      executionId: Id<"tool_executions">,
-      priority: number,
-      displayType: "summary" | "detailed"
-    }],
-    pendingActions: [{
-      actionType: "upload_document" | "contact_provider" | "approve_milestone" | "schedule_inspection",
-      priority: "urgent" | "important" | "normal",
-      dueDate?: number,
-      description: string
-    }]
-  },
-  panelComponents: [{
-    componentType: "PropertySummary" | "TransactionProgress" | "FinancialSummary" | "QuickActions" | "etc",
-    priority: number,
-    isVisible: boolean,
-    config: object  // Component-specific configuration
-  }],
-  lastUpdated: number,
-  autoUpdated: boolean     // Whether this was AI-updated or user-configured
+  // Borrowing capacity
+  calculatedCapacity     Decimal?
+  capacityCalculatedAt   DateTime?
+  stressTestPassed       Boolean?
+
+  // Credit information
+  creditScore           Int?
+  creditScoreProvider   String?
+  creditLastUpdated     DateTime?
+
+  // Government benefits
+  isFirstHomeBuyer      Boolean @default(false)
+  eligibleGrants        String[]
+  appliedGrants         String[]
+  receivedGrants        String[]
+
+  verified    Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("financial_profiles")
 }
 
-// agent_tools table - Custom tool definitions for property domain
-{
-  _id: Id<"agent_tools">,
-  toolName: string,
-  toolType: "calculator" | "search" | "document_analysis" | "valuation" | "comparison",
-  description: string,
-  parameters: {
-    schema: object,        // Zod schema for tool parameters
-    required: string[]
-  },
-  handler: string,         // Reference to Convex function
-  uiComponent?: string,    // Frontend component for tool result display
-  category: "finance" | "legal" | "search" | "analysis" | "workflow",
-  permissions: {
-    roles: string[],       // User roles that can access this tool
-    contextRequired?: string[] // Required context for tool execution
-  },
-  isActive: boolean,
-  createdAt: number
+model MarketData {
+  id       String @id @default(cuid())
+  suburb   String
+  postcode String
+  state    String
+  type     PropertyType
+
+  // Price metrics
+  medianPrice       Decimal
+  quarterlyGrowth   Decimal
+  yearlyGrowth      Decimal
+  fiveYearGrowth    Decimal
+
+  // Market activity
+  salesVolume       Int
+  daysOnMarket      Int
+  auctionClearance  Decimal?
+
+  // Investment metrics
+  medianRent        Decimal?
+  rentalYield       Decimal?
+  vacancyRate       Decimal?
+
+  // Demographics & Infrastructure
+  populationGrowth  Decimal?
+  medianAge         Decimal?
+  medianIncome      Decimal?
+  transportScore    Int?
+  schoolRating      Decimal?
+  amenitiesScore    Int?
+
+  // Data source
+  dataSource        String
+  lastUpdated       DateTime @default(now())
+
+  // Relations
+  properties Property[]
+
+  @@unique([suburb, postcode, type])
+  @@map("market_data")
 }
 
-// tool_executions table - Track tool usage and results for chat display
-{
-  _id: Id<"tool_executions">,
-  threadId: string,        // Convex agent thread ID
-  messageId: string,       // Convex agent message ID
-  toolName: string,
-  parameters: object,
-  result: {
-    success: boolean,
-    data?: object,
-    error?: string,
-    displayComponent?: string, // UI component to render result
-    actions?: [{             // Follow-up actions user can take
-      label: string,
-      type: "navigate" | "download" | "share" | "save",
-      target: string
-    }]
-  },
-  executionTime: number,   // Milliseconds
-  userId: Id<"users">,
-  createdAt: number
+enum EmploymentStatus {
+  EMPLOYED
+  SELF_EMPLOYED
+  CONTRACTOR
+  UNEMPLOYED
+  RETIRED
+  STUDENT
+}
+
+enum IncomeFrequency {
+  WEEKLY
+  FORTNIGHTLY
+  MONTHLY
+  ANNUALLY
+}
+
+enum EmploymentType {
+  PERMANENT
+  CONTRACT
+  CASUAL
+  PART_TIME
 }
 
 // conversation_context table - Enhanced context for agent memory
@@ -914,7 +1465,7 @@ const ContextPanelManager = {
 
 ---
 
-## 4. AI Agent System Design
+## 4. Mastra Agent System Design
 
 ### 4.1 Agent Hierarchy & Responsibilities
 
@@ -929,26 +1480,48 @@ const ContextPanelManager = {
 - Context switching between transaction phases
 - Cross-agent information synthesis
 
-**Convex Implementation**:
+**Mastra Implementation**:
 
 ```typescript
-// Orchestrator agent workflow
-export const orchestratorWorkflow = defineWorkflow("orchestrator", async (ctx, args) => {
-  const { userId, message, threadId } = args
-
-  // Classify intent and determine required agents
-  const intent = await ctx.action(classifyUserIntent, { message })
-
-  // Spawn or activate appropriate specialized agents
-  const agents = await ctx.action(manageAgentLifecycle, { intent, threadId })
-
-  // Route message to appropriate agent(s)
-  const responses = await Promise.all(
-    agents.map(agent => ctx.action(routeToAgent, { agent, message, context }))
-  )
-
-  // Synthesize and return unified response
-  return await ctx.action(synthesizeResponse, { responses, context })
+// Orchestrator agent configuration
+export const orchestratorAgent = new Agent({
+  name: "PropertyOrchestratorAgent",
+  instructions: `You are the main orchestrator for property transactions. 
+    You route conversations to specialized agents and maintain context across 
+    the entire property journey. You have access to transaction data and can 
+    coordinate between multiple specialized agents.`,
+  model: openai.chat("gpt-4o"),
+  tools: {
+    routeToSpecialist: createTool({
+      description: "Route conversation to specialist agent",
+      args: z.object({
+        agentType: z.enum(["buyer", "finance", "property", "document", "match"]),
+        context: z.object({
+          transactionId: z.string().optional(),
+          userRole: z.string(),
+          currentPhase: z.string(),
+        }),
+      }),
+      handler: async (ctx, args) => {
+        // Route to appropriate specialist agent
+        const agent = await getSpecialistAgent(args.agentType)
+        return await agent.processMessage(ctx.message, args.context)
+      },
+    }),
+    updateTransactionPhase: createTool({
+      description: "Update current transaction phase",
+      args: z.object({
+        transactionId: z.string(),
+        newPhase: z.enum(["onboarding", "search", "contract", "settlement"]),
+      }),
+      handler: async (ctx, args) => {
+        await prisma.mastraIntegration.update({
+          where: { transactionId: args.transactionId },
+          data: { currentPhase: args.newPhase },
+        })
+      },
+    }),
+  },
 })
 ```
 
