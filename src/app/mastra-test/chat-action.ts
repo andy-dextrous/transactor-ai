@@ -26,7 +26,12 @@ export async function streamChatResponse(
   // Start the streaming in an async function to ensure proper handling
   ;(async () => {
     try {
-      const agent = mastra.getAgent("weatherAgent")
+      // 🎯 NOW USING THE ORCHESTRATOR AGENT - Better streaming support!
+      const orchestrator = mastra.getAgent("orchestratorAgent")
+
+      if (!orchestrator) {
+        throw new Error("Orchestrator agent not found")
+      }
 
       // Get the latest user message
       const latestUserMessage = messages[messages.length - 1]
@@ -34,10 +39,8 @@ export async function streamChatResponse(
         throw new Error("Last message must be from user")
       }
 
-      // Stream the response from the agent
-      const response = await agent.stream(latestUserMessage.content, {
-        resourceId,
-        threadId,
+      // Stream the response from the orchestrator agent
+      const response = await orchestrator.stream(latestUserMessage.content, {
         maxSteps: 5,
         onStepFinish: ({ toolCalls, toolResults }) => {
           // Handle tool calls when a step finishes
