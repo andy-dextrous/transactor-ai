@@ -1,17 +1,18 @@
 **Product Requirements Document (PRD)**
 **Product Name:** **Transactor 2.0 – The AI-Driven Property Concierge**
-**Doc Version:** v0.6 (Draft) **Last Updated:** 7 June 2025
+**Doc Version:** v0.7 (Updated for Tech Stack Alignment) **Last Updated:** January 2025
 
 ---
 
 ## 1. Long Description
 
 Transactor AI re-imagines the original Transactor property-tracking tool as a fully fledged, always-on concierge for every Australian property journey.
-Where the current app already gives buyers, sellers and professionals a shared timeline of milestones, documents, and reminders ([transactorapp.com][1], [transactorapp.com][2]), the new version puts an **orchestrated team of AI agents** (built on Convex's durable Agent & Workflow components) at the centre of the experience.
+Where the current app already gives buyers, sellers and professionals a shared timeline of milestones, documents, and reminders ([transactorapp.com][1], [transactorapp.com][2]), the new version puts an **orchestrated team of AI agents** (built on Mastra's durable Agent & Workflow components) at the centre of the experience.
 
 From the very first chat—"I want to buy", "I want to sell", or "I'm a conveyancer looking for leads"—Transactor 2.0 spins up role-specific agents that:
 
 - **Gather and pre-fill data** from property APIs and user uploads to create a living file for the transaction.
+- **Intelligently process uploaded documents** (contracts, bank statements, ID, reports) to automatically extract and pre-fill customer information, eliminating manual data entry.
 - **Generate and update a visual timeline** for finance, inspections, conveyancing, marketing and settlement in real-time.
 - **Match users with top-rated professionals** (conveyancers, mortgage brokers, building-and-pest inspectors) and let them accept quotes in-app.
 - **Proactively nudge** everyone about looming deadlines (e.g. cooling-off expiry) and surface risks or delays before they bite.
@@ -19,7 +20,7 @@ From the very first chat—"I want to buy", "I want to sell", or "I'm a conveyan
 - **Securely manage documents** with AI-generated plain-English summaries and compliance checks.
 - **Protect professional revenue** by preventing settlement delays through predictive risk detection and automated workflow coordination.
 
-On the back end, Convex's real-time database, durable workflows and vector-store memory let every agent remember context, resume if interrupted, and stream updates to every screen the moment state changes ([convex.dev][3], [docs.convex.dev][4]).
+On the back end, Mastra's durable workflows and vector-store memory let every agent remember context, resume if interrupted, and stream updates to every screen the moment state changes, all persisted in Supabase PostgreSQL with Prisma ORM managing application data relationships.
 
 The result is a single place where buyers feel guided, sellers feel informed, and professionals win time and new business—all while Transactor quietly scales the same core infrastructure that has already helped Australians settle more than **A\$11 billion** in property transactions ([stage.transactorapp.com][5]).
 
@@ -38,7 +39,7 @@ Transform Transactor from a passive milestone tracker into a proactive, AI-drive
 | Status info scattered across email, SMS, calls    | Constant "Where are we at?" queries          | Persistent AI chat + real-time timeline                |
 | No predictive guidance                            | Missed deadlines, stress                     | Agents surface next-best actions & countdowns          |
 | Limited finance tooling                           | Confusion on grants, equity                  | FinanceAgent runs calculators & scenarios              |
-| Static workflows                                  | Edge cases stall progress                    | Convex workflows adapt & retry automatically           |
+| Static workflows                                  | Edge cases stall progress                    | Mastra workflows adapt & retry automatically           |
 | **Settlement delays impact professional revenue** | **Lost income from pushed-out settlements**  | **Predictive risk detection & automated coordination** |
 | **No unified professional dashboard**             | **Constant context switching between deals** | **One-click status overview across all transactions**  |
 | **Manual coordination between parties**           | **Bottlenecks and communication breakdowns** | **AI orchestration of all parties and dependencies**   |
@@ -67,6 +68,9 @@ Transform Transactor from a passive milestone tracker into a proactive, AI-drive
 1. **First-Home Buyer (Chloe, 28)** – needs grants, budgeting help.
 2. **Upgrader Seller (Raj, 41)** – simultaneous buy-and-sell.
 3. **Investor (Lena, 35)** – equity strategy & refinance.
+4. **Equity Explorer (David, 33)** – homeowner curious about unlocking property value for renovations, investment, or lifestyle.
+5. **Aspiring Buyer (Emma, 26)** – actively saving for first home, needs guidance on deposit targets, market timing, and purchase strategy.
+6. **Overwhelmed New Owner (Jake, 30)** – just settled on first property, needs post-purchase support and guidance.
 
 ### Property Professional Personas
 
@@ -83,13 +87,29 @@ Transform Transactor from a passive milestone tracker into a proactive, AI-drive
 
 ### Consumer Stories
 
-| ID     | As a …   | I want …                                     | So that …                |
-| ------ | -------- | -------------------------------------------- | ------------------------ |
-| B-01   | Buyer    | chat onboarding that auto-fills listing data | setup < 5 min            |
-| B-04   | Buyer    | deadline nudges                              | I never miss cooling-off |
-| S-02   | Seller   | AI pricing guidance                          | realistic expectations   |
-| INV-03 | Investor | equity scenarios                             | unlock capital           |
-| SYS-02 | Any role | one place for docs & chat                    | zero email chase         |
+| ID         | As a …       | I want …                                         | So that …                        |
+| ---------- | ------------ | ------------------------------------------------ | -------------------------------- |
+| B-01       | Buyer        | chat onboarding that auto-fills listing data     | setup < 5 min                    |
+| B-04       | Buyer        | deadline nudges                                  | I never miss cooling-off         |
+| S-02       | Seller       | AI pricing guidance                              | realistic expectations           |
+| INV-03     | Investor     | equity scenarios                                 | unlock capital                   |
+| SYS-02     | Any role     | one place for docs & chat                        | zero email chase                 |
+| **SYS-03** | **Any role** | **upload contract → auto-fill property details** | **eliminate manual data entry**  |
+| **SYS-04** | **Any role** | **bank statement upload → auto-extract income**  | **instant financial assessment** |
+
+### New User Persona Stories
+
+| ID     | As a …          | I want …                                          | So that …                              |
+| ------ | --------------- | ------------------------------------------------- | -------------------------------------- |
+| EQ-01  | Equity Explorer | instant equity calculation from my property value | I know what I can unlock               |
+| EQ-02  | Equity Explorer | renovation vs investment scenarios                | I choose the smartest use of my equity |
+| EQ-03  | Equity Explorer | broker connections for equity loans               | I can access my property wealth        |
+| ASP-01 | Aspiring Buyer  | personalised savings plan with market insights    | I reach my deposit goal efficiently    |
+| ASP-02 | Aspiring Buyer  | market timing guidance and price predictions      | I buy at the right time                |
+| ASP-03 | Aspiring Buyer  | budget scenarios with different deposit amounts   | I understand all my options            |
+| NEW-01 | New Owner       | post-settlement checklist and guidance            | I don't miss important next steps      |
+| NEW-02 | New Owner       | home maintenance scheduler and tradie connections | I protect my investment properly       |
+| NEW-03 | New Owner       | ongoing financial optimization (rates, insurance) | I save money and build wealth          |
 
 ### Property Professional Stories
 
@@ -105,6 +125,8 @@ Transform Transactor from a passive milestone tracker into a proactive, AI-drive
 | **PRO-08** | **Property Valuer**    | **instant report distribution to all parties**   | **faster payment cycles**                       |
 | **PRO-09** | **Any Professional**   | **revenue impact calculator for delays**         | **quantify cost of settlement pushouts**        |
 | **PRO-10** | **Any Professional**   | **AI-powered risk assessment of deals**          | **prioritise attention on at-risk settlements** |
+| **PRO-11** | **Any Professional**   | **contract upload → auto-create client file**    | **instant onboarding, zero data entry**         |
+| **PRO-12** | **Any Professional**   | **document upload → auto-extract key terms**     | **immediate contract analysis**                 |
 
 ---
 
@@ -119,13 +141,13 @@ Transform Transactor from a passive milestone tracker into a proactive, AI-drive
 | Dashboard                       | Two-pane layout – persistent chat + tabbed workspace (Timeline, Messages, Documents, Connections, Finance Lab, Equity Studio) |
 | **Professional Command Center** | **Multi-deal overview, revenue timeline, risk alerts, client communication hub**                                              |
 | Timeline                        | Real-time Gantt, milestone auto-updates                                                                                       |
-| Documents                       | Upload, AI summary, compliance checker                                                                                        |
+| Documents                       | Upload, AI summary, compliance checker, **intelligent data extraction and pre-filling**                                       |
 | Finance Lab                     | Stamp-duty, borrowing-power, repayment, grant-eligibility & rate-watch tools                                                  |
 | Equity Studio                   | Valuation API + loan balance → usable equity scenarios                                                                        |
 | Marketplace                     | Ranked provider matches, quote acceptance, ratings                                                                            |
 | **Settlement Guardian**         | **Predictive delay detection, automated escalation, revenue protection analytics**                                            |
 | **Communication Orchestrator**  | **AI-powered client updates, professional notifications, multi-party coordination**                                           |
-| Notifications                   | In-app toast + email/SMS via Convex actions                                                                                   |
+| Notifications                   | In-app toast + email/SMS via Mastra workflows                                                                                 |
 
 ### 7.2 Professional-Specific Features
 
@@ -139,7 +161,8 @@ Transform Transactor from a passive milestone tracker into a proactive, AI-drive
 #### For Conveyancers
 
 - **Matter Management**: Automated milestone tracking across all active files
-- **Document Intelligence**: AI flags missing or problematic contract clauses
+- **Document Intelligence**: AI flags missing or problematic contract clauses and auto-extracts key contract terms
+- **Smart Data Entry**: Contract uploads automatically populate client details, property info, and key dates
 - **Deadline Orchestration**: Coordinates searches, finance, inspections automatically
 - **Compliance Monitoring**: Real-time checks for regulatory requirements
 
@@ -195,7 +218,7 @@ Transform Transactor from a passive milestone tracker into a proactive, AI-drive
 
 - **Performance:** P95 agent response < 3 s; Professional dashboard loads < 2 s
 - **Reliability:** Workflows resume after crash; retries on API failure; 99.9% uptime for professional features
-- **Security:** Role-based ACL in Convex; docs encrypted at rest; professional data segregation
+- **Security:** Role-based ACL in Mastra; docs encrypted at rest; professional data segregation
 - **Accessibility:** WCAG 2.2 AA; Radix components audited
 - **Scalability:** Support 1000+ concurrent professional users; 10,000+ active transactions
 - **Mobile Performance:** Professional mobile app with offline capability for inspections
@@ -207,10 +230,11 @@ Transform Transactor from a passive milestone tracker into a proactive, AI-drive
 | Layer                 | Stack                                                          |
 | --------------------- | -------------------------------------------------------------- |
 | Frontend              | Next 15 (App Router), React 19, Tailwind 4, Radix UI, GSAP     |
-| Realtime & Data       | Convex DB & reactive queries                                   |
-| AI & Workflows        | `@convex-dev/agent` + Convex `workflows`                       |
-| Auth                  | Clerk (future) / next-auth placeholder                         |
-| Comms                 | SendGrid email, Twilio SMS via Convex actions                  |
+| Database & ORM        | Supabase PostgreSQL + Prisma (application data)                |
+| AI Orchestration      | Mastra agents, workflows, memory, storage                      |
+| Real-time Updates     | Supabase real-time subscriptions                               |
+| Auth                  | Supabase Auth (future) / next-auth placeholder                 |
+| Comms                 | SendGrid email, Twilio SMS via Mastra workflows                |
 | External APIs         | CoreLogic (valuations), RateCity (mortgage rates)              |
 | **Professional APIs** | **MLS integrations, calendar sync, trust accounting webhooks** |
 
@@ -219,30 +243,45 @@ Transform Transactor from a passive milestone tracker into a proactive, AI-drive
 ## 10. System Architecture (Summary)
 
 1. **Client** hits `/` → welcomes user with Role-Pick chat.
-2. **OrchestratorAgent** creates role-specific agents (BuyerAgent, SellerAgent, etc.).
-3. **Professional agents** maintain multi-deal state and revenue projections.
-4. Agents persist chat and state to Convex (`agent_messages`).
-5. Long tasks (e.g. compliance check) are off-loaded to durable **Workflows**.
-6. **Settlement Guardian** continuously monitors all deals for delay risks.
-7. Front-end subscribes to Convex queries; Timeline and notifications update instantly.
-8. **Professional Command Center** aggregates data across all user's active deals.
+2. **Mastra OrchestratorAgent** creates role-specific agents (BuyerAgent, SellerAgent, etc.).
+3. **Professional agents** maintain multi-deal state and revenue projections using Mastra memory.
+4. Agents persist chat and state to Supabase via Mastra storage integration.
+5. Long tasks (e.g. compliance check) are off-loaded to durable **Mastra Workflows**.
+6. **Settlement Guardian** continuously monitors all deals for delay risks using Mastra's scheduled workflows.
+7. Front-end subscribes to Supabase real-time queries; Timeline and notifications update instantly.
+8. **Professional Command Center** aggregates data across all user's active deals using Prisma relations.
+9. **Hybrid Data Architecture**: Prisma manages application data, Mastra handles AI/agent data, both on shared Supabase instance.
 
 ---
 
-## 11. Data Model (Convex Draft)
+## 11. Data Model (Supabase + Prisma + Mastra Hybrid)
 
-| Table                     | Key fields                                                                |
-| ------------------------- | ------------------------------------------------------------------------- |
-| `users`                   | `_id`, `role`, `email`, `authId`, `professionalType`                      |
-| `properties`              | `address`, `latLon`, `roles[]`                                            |
-| `threads`                 | `propertyId`, `userIds[]`, `status`, `riskScore`                          |
-| `milestones`              | `threadId`, `title`, `dueDate`, `status`, `criticalPath`                  |
-| `documents`               | `propertyId`, `type`, `url`, `summary`                                    |
-| `agent_messages`          | `threadId`, `role`, `content`, `embedding`                                |
-| `providers`               | `type`, `name`, `rating`, `feeRange`                                      |
-| **`professional_deals`**  | **`userId`, `propertyId`, `role`, `revenueAmount`, `expectedSettlement`** |
-| **`settlement_risks`**    | **`threadId`, `riskFactors[]`, `delayProbability`, `impactAnalysis`**     |
-| **`revenue_projections`** | **`userId`, `month`, `expectedRevenue`, `atRiskRevenue`**                 |
+### Prisma Application Data Models
+
+| Table                    | Key fields                                                               |
+| ------------------------ | ------------------------------------------------------------------------ |
+| `User`                   | `id`, `role`, `email`, `authId`, `professionalType`                      |
+| `Property`               | `address`, `latitude`, `longitude`, `type`, `estimatedValue`             |
+| `Transaction`            | `propertyId`, `type`, `status`, `mastraThreadId`, `purchasePrice`        |
+| `TransactionParticipant` | `transactionId`, `userId`, `role`, `status`                              |
+| `Milestone`              | `transactionId`, `title`, `dueDate`, `status`, `criticalPath`            |
+| `Document`               | `transactionId`, `type`, `fileUrl`, `aiSummary`, `complianceStatus`      |
+| `Provider`               | `userId`, `serviceType`, `businessName`, `averageRating`, `feeStructure` |
+| `Quote`                  | `transactionId`, `providerId`, `totalFee`, `status`, `validUntil`        |
+| **`MastraIntegration`**  | **`transactionId`, `mastraThreadId`, `agentType`, `currentPhase`**       |
+| **`FinancialProfile`**   | **`userId`, `grossIncome`, `borrowingCapacity`, `isFirstHomeBuyer`**     |
+| **`MarketData`**         | **`suburb`, `propertyType`, `medianPrice`, `quarterlyGrowth`**           |
+
+### Mastra AI/Agent Data (Auto-managed)
+
+| Data Type                  | Managed By                                              |
+| -------------------------- | ------------------------------------------------------- |
+| **Agent Conversations**    | **Mastra memory system + Supabase storage integration** |
+| **Workflow State**         | **Mastra workflow persistence**                         |
+| **Vector Embeddings**      | **Mastra vector store (property/document search)**      |
+| **Agent Memory**           | **Mastra memory management with context retention**     |
+| **Tool Executions**        | **Mastra tool calling logs and results**                |
+| **Real-time Coordination** | **Mastra agent network communication**                  |
 
 ---
 
@@ -268,17 +307,17 @@ Transform Transactor from a passive milestone tracker into a proactive, AI-drive
 
 ## 13. AI-Agent Design
 
-| Agent                  | Core Tasks                                    | Convex Feature           | Professional Focus          |
+| Agent                  | Core Tasks                                    | Mastra Feature           | Professional Focus          |
 | ---------------------- | --------------------------------------------- | ------------------------ | --------------------------- |
-| Orchestrator           | spawn & route messages                        | top-level thread         | Multi-deal coordination     |
-| Buyer/SellerAgent      | profile, milestone plan                       | memory + text gen        | Consumer experience         |
-| FinanceAgent           | calculators, rate watch                       | scheduled workflow       | Broker integration          |
-| ConveyancingAgent      | sync provider updates                         | long-poll workflow       | Legal milestone tracking    |
-| MatchAgent             | vector search & rank providers                | hybrid search            | Professional marketplace    |
-| InsightsAgent          | delay/risk detection                          | cron analytics           | Settlement guardian         |
-| **ProfessionalAgent**  | **multi-deal management, revenue protection** | **persistent state**     | **Professional workflow**   |
-| **SettlementGuardian** | **delay prediction, risk scoring**            | **predictive analytics** | **Revenue protection**      |
-| **CommunicationAgent** | **automated client updates**                  | **scheduled messages**   | **Professional efficiency** |
+| Orchestrator           | spawn & route messages                        | agent coordination       | Multi-deal coordination     |
+| Buyer/SellerAgent      | profile, milestone plan                       | memory + workflows       | Consumer experience         |
+| FinanceAgent           | calculators, rate watch                       | scheduled workflows      | Broker integration          |
+| ConveyancingAgent      | sync provider updates                         | durable workflows        | Legal milestone tracking    |
+| MatchAgent             | vector search & rank providers                | vector store search      | Professional marketplace    |
+| InsightsAgent          | delay/risk detection                          | analytics workflows      | Settlement guardian         |
+| **ProfessionalAgent**  | **multi-deal management, revenue protection** | **persistent memory**    | **Professional workflow**   |
+| **SettlementGuardian** | **delay prediction, risk scoring**            | **predictive workflows** | **Revenue protection**      |
+| **CommunicationAgent** | **automated client updates**                  | **scheduled actions**    | **Professional efficiency** |
 
 ---
 
@@ -287,7 +326,7 @@ Transform Transactor from a passive milestone tracker into a proactive, AI-drive
 | Phase                  | Duration | Outputs                                 |
 | ---------------------- | -------- | --------------------------------------- |
 | Discovery              | 2 w      | Refined PRD, Figma flow                 |
-| Agent POC              | 2 w      | Convex Agent demo                       |
+| Agent POC              | 2 w      | Mastra Agent demo                       |
 | Core MVP               | 8 w      | Role→Timeline flows                     |
 | **Professional MVP**   | **4 w**  | **Command center, settlement guardian** |
 | Marketplace            | 2 w      | Provider matching                       |
@@ -303,7 +342,7 @@ Transform Transactor from a passive milestone tracker into a proactive, AI-drive
 
 | Assumption                                             | Risk                                    | Mitigation                                                |
 | ------------------------------------------------------ | --------------------------------------- | --------------------------------------------------------- |
-| Convex Agent API stabilises                            | Breaking change                         | Pin version, monitor releases                             |
+| Mastra Agent API stabilises                            | Breaking change                         | Pin version, monitor releases                             |
 | Property APIs allow caching                            | Rate-limits                             | Server-side cache, back-off                               |
 | Professionals adopt marketplace                        | Low liquidity                           | Seed partners, early-bird pricing                         |
 | **Settlement data quality sufficient for predictions** | **Inaccurate risk scoring**             | **Start with conservative thresholds, improve with data** |
@@ -359,17 +398,17 @@ Below is a broad, "idea-dump" catalogue of everything Transactor's AI agents cou
 
 ## 2. During Purchase (Contract → Settlement)
 
-| Theme                     | Agent-Powered Tasks                                                                                                                                                                     |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Deal Milestones**       | • Visual timeline auto-generated from contract dates <br>• Reminder nudges: cooling-off, finance, building/pest, Section 32 review, FIRB (if relevant)                                  |
-| **Document Management**   | • Secure upload & version control for contract, Form 1, special conditions <br>• AI summaries: "Key obligations & penalties in this contract" <br>• Clause-by-clause compliance checker |
-| **Communication Hub**     | • One chat thread spanning buyer, agent, broker, conveyancer <br>• Auto-sync email/SMS into thread; action-item extraction                                                              |
-| **Finance Finalisation**  | • Track loan application status; push missing-document checklist <br>• Compare lender's final rate vs. market & suggest renegotiation language                                          |
-| **Funds Flow**            | • Calculate settlement statement (deposit paid, adjustments, fees) <br>• Warn if shortfall likely; queue bank cheque or PEXA instructions                                               |
-| **Risk Monitoring**       | • Alert if building/pest report flags major defect <br>• Flag unconditional risk before finance approved                                                                                |
-| **Insurance & Utilities** | • Auto-quote building & contents insurance effective settlement day <br>• One-click electricity/gas/internet transfer                                                                   |
-| **Legal & Compliance**    | • Verify VOI (Verification of Identity) requirements met <br>• Track discharge of vendor's mortgage on title                                                                            |
-| **Emotion & Support**     | • Explain arcane terms ("caveat", "encumbrance") in plain language <br>• Stress-reduction check-ins: "7 days until settlement—here's what's left"                                       |
+| Theme                     | Agent-Powered Tasks                                                                                                                                                                                                                                                                               |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Deal Milestones**       | • Visual timeline auto-generated from contract dates <br>• Reminder nudges: cooling-off, finance, building/pest, Section 32 review, FIRB (if relevant)                                                                                                                                            |
+| **Document Management**   | • Secure upload & version control for contract, Form 1, special conditions <br>• **Intelligent data extraction**: Contract uploads auto-populate property details, dates, financials <br>• AI summaries: "Key obligations & penalties in this contract" <br>• Clause-by-clause compliance checker |
+| **Communication Hub**     | • One chat thread spanning buyer, agent, broker, conveyancer <br>• Auto-sync email/SMS into thread; action-item extraction                                                                                                                                                                        |
+| **Finance Finalisation**  | • Track loan application status; push missing-document checklist <br>• Compare lender's final rate vs. market & suggest renegotiation language                                                                                                                                                    |
+| **Funds Flow**            | • Calculate settlement statement (deposit paid, adjustments, fees) <br>• Warn if shortfall likely; queue bank cheque or PEXA instructions                                                                                                                                                         |
+| **Risk Monitoring**       | • Alert if building/pest report flags major defect <br>• Flag unconditional risk before finance approved                                                                                                                                                                                          |
+| **Insurance & Utilities** | • Auto-quote building & contents insurance effective settlement day <br>• One-click electricity/gas/internet transfer                                                                                                                                                                             |
+| **Legal & Compliance**    | • Verify VOI (Verification of Identity) requirements met <br>• Track discharge of vendor's mortgage on title                                                                                                                                                                                      |
+| **Emotion & Support**     | • Explain arcane terms ("caveat", "encumbrance") in plain language <br>• Stress-reduction check-ins: "7 days until settlement—here's what's left"                                                                                                                                                 |
 
 ---
 
@@ -398,7 +437,80 @@ Below is a broad, "idea-dump" catalogue of everything Transactor's AI agents cou
 | During Purchase | Orchestrator + ConveyancingAgent | ComplianceAgent, FundsFlowAgent, NotificationAgent |
 | Post-Purchase   | OwnershipAgent                   | EquityAgent, MaintenanceScheduler, RefinanceScout  |
 
-This exhaustive list should spark feature-prioritisation conversations: decide what belongs in MVP vs. v2, and which tasks can simply be "hand-off" (e.g., launch a partner webform) versus fully automated inside your Convex workflows.
+This exhaustive list should spark feature-prioritisation conversations: decide what belongs in MVP vs. v2, and which tasks can simply be "hand-off" (e.g., launch a partner webform) versus fully automated inside your Mastra workflows.
+
+---
+
+## Additional User Journey Details
+
+### Equity Explorer Journey (David, 33)
+
+**Entry Point**: `/` → "I want to know how much equity I have"
+
+**AI-Orchestrated Experience Flow**:
+
+```
+AI: "Let's unlock your property's potential! What's your address?"
+User: [Property auto-populated from address lookup]
+AI: "Based on recent sales, your property is worth ~$780k. What do you still owe?"
+User: "$520k on the mortgage"
+AI: [Equity calculator executes] "Excellent! You have $260k equity. Here are your options..."
+```
+
+**Key Agent-Powered Features**:
+
+- **Instant Valuation**: CoreLogic API + comparable sales analysis
+- **Equity Scenarios**: Renovation ROI vs investment property vs lifestyle spending
+- **Broker Matching**: Connect with equity release specialists
+- **Risk Assessment**: LVR calculations and serviceability checks
+- **Market Intelligence**: Optimal timing for equity release strategies
+
+---
+
+### Aspiring Buyer Journey (Emma, 26)
+
+**Entry Point**: `/` → "I'm saving for my first home"
+
+**AI-Orchestrated Experience Flow**:
+
+```
+AI: "Let's create your homeownership roadmap! What's your savings goal?"
+User: "I want to buy around $500k in Melbourne"
+AI: [Calculates deposit + costs] "You'll need ~$65k total. Current savings?"
+User: "$25k saved so far"
+AI: "Great start! Here's your personalised savings plan..."
+```
+
+**Key Agent-Powered Features**:
+
+- **Dynamic Savings Plan**: Tracks progress toward deposit + stamp duty + costs
+- **Market Timing**: Alerts when market conditions favor first-home buyers
+- **Grant Optimization**: Maximizes all available government assistance
+- **Budget Scenarios**: Shows impact of different deposit amounts on borrowing
+- **Readiness Tracker**: Gamified progress with milestone celebrations
+
+---
+
+### Overwhelmed New Owner Journey (Jake, 30)
+
+**Entry Point**: `/` → "I just bought my first home and I'm overwhelmed"
+
+**AI-Orchestrated Experience Flow**:
+
+```
+AI: "Congratulations on your new home! I'll help you settle in smoothly."
+User: "I don't know what I'm supposed to do now"
+AI: "No worries - I've created your post-purchase checklist. First priority..."
+```
+
+**Key Agent-Powered Features**:
+
+- **Post-Settlement Checklist**: Utilities, insurance, council rates, etc.
+- **Maintenance Scheduler**: Seasonal reminders with trusted tradie connections
+- **Financial Optimization**: Rate monitoring, insurance reviews, budgeting
+- **Homeowner Education**: Plain-English guides for property ownership
+- **Stress Reduction**: "You're doing great" check-ins with helpful tips
+- **Community Connection**: Local services, emergency contacts, neighborhood info
 
 2. What an AI-first consumer concierge actually does
    🔎 Pre-purchase

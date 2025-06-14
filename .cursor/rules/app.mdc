@@ -1,0 +1,360 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Transactor 2.0 - AI Agent Architecture Rules
+
+## 🏗️ CORE ARCHITECTURE
+- **Frontend**: Next.js 15 (App Router) + React 19 + Tailwind CSS 4
+- **AI Orchestration**: Mastra (agents, workflows, memory)
+- **Database**: Supabase PostgreSQL
+- **ORM**: Prisma (application data)
+- **Storage**: Mastra native storage (AI/agent data)
+- **UI**: Radix components + custom design system
+
+## 📊 HYBRID DATA RESPONSIBILITY MODEL
+
+### Mastra Handles:
+- AI agent conversations and memory (via internal and synced with supabase)
+- Workflow orchestration and state
+- Vector embeddings and semantic search
+- Agent tool executions and results
+- Chat message history and context
+- Real-time agent coordination
+
+### Prisma Handles:
+- All other data models and relationships including:
+- User profiles and authentication
+- Property listings and details
+- Transaction records and participants
+- Document metadata and organization
+- Service provider profiles and quotes
+- Financial profiles and calculations
+- Market data and analytics
+
+### Integration Pattern:
+```typescript
+// Bridge both systems via MastraIntegration table
+const transaction = await prisma.transaction.create(data)
+const workflow = await mastra.getWorkflow("propertyPurchase")
+await workflow.start({ transactionId: transaction.id })
+```
+
+## 🤖 AGENT SYSTEM HIERARCHY
+
+### OrchestratorAgent (Master Controller)
+- Main entry point for chat messages in the app - users primarily interact with this agent who is responsible for managing his team of sub agents who each specialise in different facets of the business logic.
+- Routes all conversations to specialist agents
+- Manages agent lifecycle and coordination
+- Maintains cross-conversation context
+- Controls contextual panel updates
+
+### Specialist Agents:
+- **BuyerAgent**: Property search, purchase workflow, milestone tracking
+- **FinanceAgent**: Calculations, loan scenarios, affordability checks
+- **PropertyAgent**: Valuations, market insights, comparisons
+- **DocumentAgent**: Contract analysis, compliance checking
+- **MatchAgent**: Service provider matching using vector search
+- **SettlementGuardian**: Risk detection, delay prevention
+
+## 🎯 CHAT-CENTRIC UX PATTERN (80% of interactions)
+
+### Primary Interface: `/dashboard/[threadId?]`
+```
+┌─────────────────────┬──────────────────┐
+│ Chat Interface      │ Contextual Panel │
+│ (Primary, 60%)      │ (AI-Controlled)  │
+│                     │                  │
+│ - All conversations │ - Property info  │
+│ - Tool executions   │ - Calculations   │
+│ - Agent responses   │ - Timeline       │
+│ - File uploads      │ - Quick actions  │
+└─────────────────────┴──────────────────┘
+```
+
+### Supporting Routes (20% of interactions):
+- `/tools/*` - Standalone calculators and utilities
+- `/manage/*` - Administrative tasks and deep-dives
+- `/marketplace/*` - Service provider discovery
+- `/professional/*` - Provider-specific dashboards
+
+## 🛠️ TOOL INTEGRATION PATTERN
+
+### Tool Definition:
+```typescript
+const toolName = createTool({
+  description: "Clear tool purpose",
+  args: zodSchema,
+  handler: async (ctx, args) => {
+    // 1. Execute core logic
+    // 2. Save execution to Prisma
+    // 3. Return structured result with displayComponent
+  }
+})
+```
+
+### Inline Display in Chat:
+- Tools execute within conversation flow
+- Results appear as rich components in chat
+- Action buttons enable follow-up workflows
+- Context panel updates automatically
+
+## 📁 KEY FILE LOCATIONS
+
+### Mastra Configuration:
+- `src/mastra/index.ts` - Core Mastra instance
+- `src/mastra/agents/` - Agent definitions
+- `src/mastra/tools/` - Tool definitions
+- `src/mastra/workflows/` - Workflow orchestration
+
+### Database Layer:
+- `prisma/schema.prisma` - Application data model
+- `src/lib/prisma.ts` - Database client
+- `src/app/actions/` - Server actions bridging Prisma + Mastra
+
+### UI Components:
+- `src/components/ui/` - Radix-based design system
+- `src/components/chat/` - Chat interface components
+- `src/components/tools/` - Tool result displays
+- `src/app/(frontend)/css/` - Tailwind configuration
+
+## 🎨 DESIGN SYSTEM RULES
+
+### CSS Architecture (Tailwind v4):
+- `globals.css` - Entry point
+- `theme.css` - Colors and design tokens
+- `base.css` - Element base styles
+- `typography.css` - Text styling (never override directly)
+- `components.css` - Reusable utility classes
+
+### Component Guidelines:
+- Use existing Radix components from `src/components/ui/`
+- Follow typography system (no direct font styling)
+- Leverage existing design tokens
+- Maintain brand consistency
+
+## 💾 DATA FLOW PATTERNS
+
+### User Journey → Data Creation:
+1. **Chat Interaction** → Mastra agent processes
+2. **Tool Execution** → Results stored in Prisma
+3. **Workflow Trigger** → Mastra orchestrates next steps
+4. **Panel Update** → UI reflects new state automatically
+
+### State Management:
+- **Server State**: Prisma queries via React Query/SWR
+- **Agent State**: Mastra memory system
+- **UI State**: React state for local interactions
+- **Real-time**: Supabase subscriptions for live updates
+
+## 🔧 DEVELOPMENT CONVENTIONS
+
+### Agent Development:
+- Always define clear tool purposes and parameters
+- Include display components for tool results
+- Handle errors gracefully with user feedback
+- Maintain conversation context across interactions
+
+### Database Operations:
+- Use Prisma for all application data queries
+- Bridge to Mastra for agent-related operations
+- Seed databases with realistic test data
+- Follow schema conventions (camelCase, descriptive names)
+
+### File Organization:
+- Keep agent logic in `src/mastra/`
+- Database logic in `src/lib/` and `src/app/actions/`
+- UI components in `src/components/`
+- Use kebab-case for file names
+
+## 🚦 CRITICAL INTEGRATION POINTS
+
+### Chat → Database:
+```typescript
+// Message triggers agent → agent uses tools → tools query/update Prisma
+const result = await agent.sendMessage(message, { 
+  transactionId,
+  userRole,
+  currentPhase 
+})
+```
+
+### Panel Control:
+```typescript
+// Agents control what appears in contextual panel
+const context = analyzeConversation(threadId)
+const components = determineRelevantComponents(context)
+// Panel updates automatically based on agent decisions
+```
+
+### Workflow Bridge:
+```typescript
+// Prisma transaction triggers Mastra workflow
+const transaction = await prisma.transaction.create(data)
+await mastra.workflow.start({ transactionId: transaction.id })
+```
+
+## ⚡ PERFORMANCE GUIDELINES
+
+- Chat response time: <3 seconds P95
+- Panel updates: <2 seconds
+- Tool execution: <5 seconds
+- Database queries: Use proper indexing and relations
+- Agent memory: Optimize context window usage
+
+## 🔒 SECURITY PATTERNS
+
+- Agent access control by user role
+- Tool permissions based on context requirements
+- Document access controlled via Prisma relations
+- Agent conversations isolated by user/thread
+- Financial data encrypted and access-logged
+
+## 🎯 PREFERRED DEVELOPMENT PATTERNS
+
+### Mastra Server Action Pattern:
+```typescript
+// Always expose Mastra functionality via server actions in src/lib/
+// src/lib/mastra-actions.ts
+'use server'
+
+import { mastra } from '@/mastra'
+
+export async function sendAgentMessage(threadId: string, message: string) {
+  const response = await mastra.agents.orchestrator.sendMessage({
+    threadId,
+    message,
+    context: await getConversationContext(threadId)
+  })
+  return response
+}
+
+export async function executeAgentTool(toolName: string, params: any) {
+  return await mastra.tools[toolName].execute(params)
+}
+```
+
+### Design System Priority:
+- **ALWAYS check `src/components/ui/` FIRST** before creating new components
+- Complete design system lives in `src/components/` - use it with priority for ANY UI changes/additions
+- Never create custom UI components if equivalent exists in the design system
+- Extend existing components rather than building from scratch
+- Follow established patterns in `src/components/` for consistency
+
+### Mastra MCP Documentation:
+- **CRITICAL**: All Mastra-related code must be cross-checked with Mastra MCP documentation
+- Mastra is not well-known to AI models - constantly check docs for examples and API info
+- Use MCP documentation for: agents, workflows, tools, memory, storage, vectors
+- Verify syntax and patterns against official Mastra examples
+- When in doubt about Mastra functionality, consult MCP docs first
+
+### Framework Utilization:
+- **Mastra**: Use ALL available capabilities - RAG, vectors, document chunking, vectorisation, chats, workflows, memory, storage
+- **Prisma**: Leverage full ORM capabilities - relations, transactions, migrations, seeding, type safety
+- **Supabase**: Use real-time subscriptions, RLS, storage, auth where applicable
+- **Radix UI**: Prioritize existing primitives over custom components
+- **Next.js 15**: Use App Router patterns, server components, streaming
+
+### Mastra-First Mindset:
+```typescript
+// GOOD: Leverage Mastra's built-in capabilities
+const vectorStore = mastra.vectorStore
+const workflow = mastra.workflows.propertyPurchase
+const agent = mastra.agents.buyer
+
+// AVOID: Custom implementations when Mastra provides functionality
+// Don't build custom chat systems, vector stores, or workflow engines
+```
+
+### Prisma-First Data Operations:
+```typescript
+// GOOD: Use Prisma's full capabilities
+const result = await prisma.transaction.create({
+  data: { ... },
+  include: { property: true, participants: true }
+})
+
+// Use transactions for data consistency
+await prisma.$transaction([...operations])
+```
+
+Remember: This is a **chat-first, AI-orchestrated** property platform where agents handle complexity while users enjoy conversational simplicity. Every feature should work within the chat interface first, with supporting routes for deep-dive needs only.
+
+**Always remember that you have the Mastra MCP server available for understanding exactly how to implement any changes in the agentic, streaming, workflow, eval (Mastra) side of things.**
+
+**This app has a complete design system built into src/components. There is also a fully comprehensive shadcn library in src/components/ui that is already styled. Use these wherever you can to maintain brand consistency.**
+
+## Libraries Included
+
+``` json
+  "dependencies": {
+    "@ai-sdk/openai": "^1.3.22",
+    "@gsap/react": "latest",
+    "@hookform/resolvers": "^5.0.1",
+    "@mastra/core": "^0.10.5",
+    "@mastra/libsql": "^0.10.2",
+    "@mastra/loggers": "^0.10.2",
+    "@mastra/mcp": "^0.10.3",
+    "@mastra/memory": "^0.10.3",
+    "@mastra/pg": "^0.10.3",
+    "@prisma/client": "^6.9.0",
+    "@radix-ui/react-accordion": "^1.2.11",
+    "@radix-ui/react-alert-dialog": "^1.1.14",
+    "@radix-ui/react-aspect-ratio": "^1.1.7",
+    "@radix-ui/react-avatar": "^1.1.10",
+    "@radix-ui/react-checkbox": "^1.3.2",
+    "@radix-ui/react-collapsible": "^1.1.11",
+    "@radix-ui/react-context-menu": "^2.2.15",
+    "@radix-ui/react-dialog": "^1.1.14",
+    "@radix-ui/react-dropdown-menu": "^2.1.15",
+    "@radix-ui/react-hover-card": "^1.1.14",
+    "@radix-ui/react-icons": "^1.3.2",
+    "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-menubar": "^1.1.15",
+    "@radix-ui/react-navigation-menu": "^1.2.13",
+    "@radix-ui/react-popover": "^1.1.14",
+    "@radix-ui/react-progress": "^1.1.7",
+    "@radix-ui/react-radio-group": "^1.3.7",
+    "@radix-ui/react-scroll-area": "^1.2.9",
+    "@radix-ui/react-select": "^2.2.5",
+    "@radix-ui/react-separator": "^1.1.7",
+    "@radix-ui/react-slider": "^1.3.5",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-switch": "^1.2.5",
+    "@radix-ui/react-tabs": "^1.1.12",
+    "@radix-ui/react-toast": "^1.2.14",
+    "@radix-ui/react-toggle": "^1.1.9",
+    "@radix-ui/react-toggle-group": "^1.1.10",
+    "@radix-ui/react-tooltip": "^1.2.7",
+    "@tailwindcss/postcss": "^4.1.8",
+    "ai": "^4.3.16",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "date-fns": "^4.1.0",
+    "embla-carousel-react": "^8.6.0",
+    "framer-motion": "^12.17.3",
+    "gsap": "latest",
+    "input-otp": "^1.4.2",
+    "lucide-react": "^0.469.0",
+    "mastra": "^0.10.5",
+    "next": "^15.3.3",
+    "npm-run-all": "^4.1.5",
+    "prisma": "^6.9.0",
+    "react": "^19.0.1",
+    "react-day-picker": "^8.10.1",
+    "react-dom": "^19.0.1",
+    "react-hook-form": "^7.57.0",
+    "react-markdown": "^10.1.0",
+    "react-resizable-panels": "^3.0.2",
+    "recharts": "^2.15.3",
+    "sonner": "^2.0.5",
+    "tailwind-merge": "^3.0.2",
+    "tailwind-variants": "^1.0.0",
+    "tailwindcss": "^4.0.17",
+    "tw-animate-css": "^1.2.5",
+    "vaul": "^1.1.2",
+    "zod": "^3.25.53"
+  },
+  ```
